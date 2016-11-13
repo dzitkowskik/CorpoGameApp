@@ -44,10 +44,19 @@ namespace CorpoGameApp
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
+            // Identity settings
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 4;
+                options.Password.RequireNonAlphanumeric = false;                
+            });
+
+            // MVC
             services.AddMvc();
 
             // Add Game Settings
@@ -87,7 +96,7 @@ namespace CorpoGameApp
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Game}/{action=Index}/{id?}");
             });
         }
     }

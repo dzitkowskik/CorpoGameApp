@@ -9,5 +9,7 @@ namespace CorpoGameApp.Services
         bool EndGame(int gameId, int? wonTeam);
         int GetPlayerScore(int playerId);
         IEnumerable<Player> GetAllPlayers();
+        bool PlayerExists(string userId);
+        void CreatePlayer(Player player);
     }
 }

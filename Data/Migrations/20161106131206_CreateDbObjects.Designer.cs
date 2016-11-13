@@ -8,8 +8,8 @@ using CorpoGameApp.Data;
 namespace CorpoGameApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20161016160331_addGameAndPlayersTables")]
-    partial class addGameAndPlayersTables
+    [Migration("20161106131206_CreateDbObjects")]
+    partial class CreateDbObjects
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -70,9 +70,11 @@ namespace CorpoGameApp.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("EndTime");
+                    b.Property<DateTime?>("EndTime");
 
                     b.Property<DateTime>("StartTime");
+
+                    b.Property<int?>("WinnersTeam");
 
                     b.HasKey("Id");
 
@@ -84,9 +86,13 @@ namespace CorpoGameApp.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Name");
+
                     b.Property<int>("Score")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue(0);
+
+                    b.Property<string>("Surname");
 
                     b.Property<string>("UserId");
 
@@ -104,6 +110,8 @@ namespace CorpoGameApp.Data.Migrations
                     b.Property<int>("GameId");
 
                     b.Property<int?>("GameId1");
+
+                    b.Property<int>("Team");
 
                     b.HasKey("PlayerId", "GameId");
 

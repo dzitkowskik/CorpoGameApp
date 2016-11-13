@@ -10,9 +10,9 @@ namespace CorpoGameApp.ViewModels.Game
 
         public PlayerListItemViewModel(Player player)
         {
-            var userNameParts = player.User.UserName.Split(' ');
-            Name = (userNameParts?.Length??0) > 0 ? userNameParts[0] : string.Empty;
-            Surname = (userNameParts?.Length??0) > 1 ? userNameParts[1] : string.Empty;
+            Name = string.IsNullOrEmpty(player.Name) ? player.User.Email : player.Name;
+            Surname = player.Surname;
+            Score = player.Score.ToString();
         }
     }
 }

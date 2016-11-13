@@ -36,6 +36,8 @@ namespace CorpoGameApp.Data
                 .HasOne(pc => pc.Player)
                 .WithMany(c => c.Games)
                 .HasForeignKey(pc => pc.GameId);
+
+            modelBuilder.Entity<Player>().HasOne(p => p.User).WithOne();
         }
     }
 }

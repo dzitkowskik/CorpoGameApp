@@ -17,7 +17,7 @@
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
 </head>
-<body>
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -27,13 +27,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">CorpoGameApp</a>
+                <a asp-area="" asp-controller="Game" asp-action="Index" class="navbar-brand">CorpoGameApp</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a class="page-scroll" href="#intro">About</a></li>
+                    <li><a class="page-scroll" href="#reservation">Reservation</a></li>
+                    <li><a class="page-scroll" href="#player">Player</a></li>
+                    <li><a class="page-scroll" href="#contact">Contact</a></li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
@@ -41,9 +42,8 @@
     </div>
     <div class="container body-content">
         @RenderBody()
-        <hr />
         <footer>
-            <p>&copy; 2016 - CorpoGameApp</p>
+            <p>&copy; 2016 - CorpoGameApp by Karol Dzitkowski</p>
         </footer>
     </div>
 
@@ -52,6 +52,7 @@
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
         <script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
+        <script src="~/lib/jquery-easing/jquery.easing.js"></script>
     </environment>
     <environment names="Staging,Production">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.3.min.js"
@@ -63,6 +64,8 @@
                 asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/lib/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+        <script src="~/lib/jquery-easing/jquery.easing.min.js"></script>
     </environment>
 
     @RenderSection("scripts", required: false)

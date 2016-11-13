@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CorpoGameApp.Data.Migrations
 {
-    public partial class addGameAndPlayersTables : Migration
+    public partial class CreateDbObjects : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,8 +14,9 @@ namespace CorpoGameApp.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Autoincrement", true),
-                    EndTime = table.Column<DateTime>(nullable: false),
-                    StartTime = table.Column<DateTime>(nullable: false)
+                    EndTime = table.Column<DateTime>(nullable: true),
+                    StartTime = table.Column<DateTime>(nullable: false),
+                    WinnersTeam = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -28,8 +29,10 @@ namespace CorpoGameApp.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Autoincrement", true),
+                    Name = table.Column<string>(nullable: true),
                     Score = table.Column<int>(nullable: false, defaultValue: 0)
                         .Annotation("Autoincrement", true),
+                    Surname = table.Column<string>(nullable: true),
                     UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -49,7 +52,8 @@ namespace CorpoGameApp.Data.Migrations
                 {
                     PlayerId = table.Column<int>(nullable: false),
                     GameId = table.Column<int>(nullable: false),
-                    GameId1 = table.Column<int>(nullable: true)
+                    GameId1 = table.Column<int>(nullable: true),
+                    Team = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

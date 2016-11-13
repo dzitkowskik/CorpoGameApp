@@ -20,19 +20,22 @@ namespace CorpoGameApp.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
+        private readonly IGameServices _gameServices;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            IGameServices gameServices)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
+            _gameServices = gameServices;
         }
 
         //
@@ -60,7 +63,6 @@ namespace CorpoGameApp.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation(1, "User logged in.");
                     return RedirectToLocal(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -107,6 +109,17 @@ namespace CorpoGameApp.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    _logger.LogInformation(1, $"Adding player {user.Email}.");
+
+                    if(!_gameServices.PlayerExists(user.Id))
+                    {
+                        var newPlayer = new Player(){
+                            User = user,
+                            Score = 0
+                        };
+                        _gameServices.CreatePlayer(newPlayer);
+                    }
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -132,7 +145,7 @@ namespace CorpoGameApp.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToAction(nameof(GameController.Index), "Game");
         }
 
         //
@@ -457,7 +470,7 @@ namespace CorpoGameApp.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction("Index", "Game");
             }
         }
 
