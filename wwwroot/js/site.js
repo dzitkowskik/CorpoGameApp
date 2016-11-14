@@ -17,3 +17,27 @@ $(function() {
         event.preventDefault();
     });
 });
+
+var selectedPlayers = function(first, second) {
+    $(first).on('changed.bs.select', function (e, clickedIndex, newValue, oldValue) {
+        console.log(clickedIndex);
+        console.log(newValue);
+        console.log(oldValue);
+        
+        var element = $(this).parent().find("div li a")[clickedIndex].text;
+        var name = element.split(' ')[0];
+        var query = "div li a:contains('" + name + "')";
+        if(newValue)
+        {
+            $(second).parent().find(query).hide();
+        } else {
+            $(second).parent().find(query).show();
+        }
+        
+    });
+};
+
+$(function() {
+    selectedPlayers('#firstTeamSelect', '#secondTeamSelect');
+    selectedPlayers('#secondTeamSelect', '#firstTeamSelect');
+});
