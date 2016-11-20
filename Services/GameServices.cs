@@ -4,13 +4,11 @@ using System.Linq;
 using CorpoGameApp.Data;
 using CorpoGameApp.Models;
 using CorpoGameApp.Properties;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace CorpoGameApp.Services
 {
-    public class GameServices : Services.IGameServices
+    public class GameServices : IGameServices
     {
         private readonly ApplicationDbContext _context;
         private readonly IOptions<GameSettings> _options;
@@ -56,27 +54,6 @@ namespace CorpoGameApp.Services
             game.EndTime = DateTime.Now;
             var result = _context.SaveChanges();
             return result > 0;
-        }
-
-        public int GetPlayerScore(int playerId)
-        {
-            return _context.Players.First(t => t.Id == playerId).Score;
-        }
-
-        public IEnumerable<Player> GetAllPlayers()
-        {
-            return _context.Players.Include(t => t.User).AsEnumerable();
-        }
-
-        public bool PlayerExists(string userId)
-        {
-            return _context.Players.Any(t => t.User.Id.Equals(userId));
-        }
-
-        public void CreatePlayer(Player player)
-        {
-            _context.Add(player);
-            _context.SaveChanges();
         }
     }
 }

@@ -20,7 +20,8 @@ namespace CorpoGameApp.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
-        private readonly IGameServices _gameServices;
+        private readonly IPlayerServices _playerServices;
+
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -28,14 +29,14 @@ namespace CorpoGameApp.Controllers
             IEmailSender emailSender,
             ISmsSender smsSender,
             ILoggerFactory loggerFactory,
-            IGameServices gameServices)
+            IPlayerServices playerServices)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
-            _gameServices = gameServices;
+            _playerServices = playerServices;
         }
 
         //
@@ -111,13 +112,13 @@ namespace CorpoGameApp.Controllers
                 {
                     _logger.LogInformation(1, $"Adding player {user.Email}.");
 
-                    if(!_gameServices.PlayerExists(user.Id))
+                    if(!_playerServices.PlayerExists(user.Id))
                     {
                         var newPlayer = new Player(){
                             User = user,
                             Score = 0
                         };
-                        _gameServices.CreatePlayer(newPlayer);
+                        _playerServices.CreatePlayer(newPlayer);
                     }
 
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713

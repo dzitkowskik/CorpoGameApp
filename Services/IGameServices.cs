@@ -7,9 +7,5 @@ namespace CorpoGameApp.Services
     {
         bool CreateGame(Dictionary<Player, int> PlayerTeams);
         bool EndGame(int gameId, int? wonTeam);
-        int GetPlayerScore(int playerId);
-        IEnumerable<Player> GetAllPlayers();
-        bool PlayerExists(string userId);
-        void CreatePlayer(Player player);
     }
 }

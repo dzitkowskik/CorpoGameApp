@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CorpoGameApp.Models;
@@ -10,8 +11,6 @@ namespace CorpoGameApp.ViewModels.Game
         
         public int TeamCapacity { get; set; }
         public int NumberOfTeams { get; set; }
-
-        public NewPlayerViewModel NewPlayer { get; set; }
 
         public NewGameViewModel(IEnumerable<Player> players, int numberOfTeams, int teamCapacity)
         {
