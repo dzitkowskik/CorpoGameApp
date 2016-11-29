@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using CorpoGameApp.Data;
 
-namespace CorpoGameApp.Data.Migrations
+namespace CorpoGameApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161129200151_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1");
@@ -109,15 +110,13 @@ namespace CorpoGameApp.Data.Migrations
 
                     b.Property<int>("GameId");
 
-                    b.Property<int?>("GameId1");
-
                     b.Property<int>("Team");
 
                     b.HasKey("PlayerId", "GameId");
 
                     b.HasIndex("GameId");
 
-                    b.HasIndex("GameId1");
+                    b.HasIndex("PlayerId");
 
                     b.ToTable("PlayerGames");
                 });
@@ -238,14 +237,15 @@ namespace CorpoGameApp.Data.Migrations
 
             modelBuilder.Entity("CorpoGameApp.Models.PlayerGames", b =>
                 {
-                    b.HasOne("CorpoGameApp.Models.Player", "Player")
-                        .WithMany("Games")
+                    b.HasOne("CorpoGameApp.Models.Game", "Game")
+                        .WithMany("Players")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("CorpoGameApp.Models.Game", "Game")
-                        .WithMany("Players")
-                        .HasForeignKey("GameId1");
+                    b.HasOne("CorpoGameApp.Models.Player", "Player")
+                        .WithMany("Games")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRoleClaim<string>", b =>

@@ -5,7 +5,7 @@ namespace CorpoGameApp.Services
 {
     public interface IGameServices
     {
-        bool CreateGame(Dictionary<Player, int> PlayerTeams);
+        bool CreateGame(IEnumerable<IEnumerable<int>> PlayerTeams);
         bool EndGame(int gameId, int? wonTeam);
     }
 }

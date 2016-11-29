@@ -1,6 +1,13 @@
 @model NewGameViewModel
 
 <h1>Create new game</h1>
+
+@if(!string.IsNullOrEmpty(Model.Error)) {
+    <div class="row has-error alert alert-danger">
+        <p class="text-danger">@Model.Error</p>
+    </div>
+}
+
 <table class="table">
     <tr>
         <th class="text-center"><h2>First team</h2></th>
@@ -12,19 +19,19 @@
             <select id="firstTeamSelect" name="FirstTeamSelect" class="selectpicker input-lg" data-live-search="true" multiple>
                 <optgroup label="First Team" data-max-options="2">
                 @foreach(var player in Model.Players) {
-                    <option>@player.Name @player.Surname (score: @player.Score)</option>
+                    <option value="@player.Id">@player.Name @player.Surname (score: @player.Score)</option>
                 }
                 </optgroup>
             </select>
         </td>
         <td>
-            <button class="btn btn-default btn-lg btn-block btn-danger" type="button">CREATE</button>
+            <button class="btn btn-default btn-lg btn-block btn-danger" type="button" onclick="createGame('@Url.Action("Create", "Game")');">CREATE</button>
         </td>
         <td class="text-center">
             <select id="secondTeamSelect" name="SecondTeamSelect" class="selectpicker input-lg" data-live-search="true" multiple>
                 <optgroup label="Second Team" data-max-options="2">
                 @foreach(var player in Model.Players) {
-                    <option>@player.Name @player.Surname (score: @player.Score)</option>
+                    <option value="@player.Id">@player.Name @player.Surname (score: @player.Score)</option>
                 }
                 </optgroup>
             </select>

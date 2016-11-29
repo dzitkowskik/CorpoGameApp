@@ -63,7 +63,16 @@ section#reservation.reservation-section div.show-tick button {
 input,
 select,
 textarea {
-    /*max-width: 280px;*/
+    max-width: 280px;
+}
+
+td.text-center {
+    max-width: 280px;
+}
+
+div.alert {
+    max-width: 50%;
+    margin: 0 auto;
 }
 
 /* Carousel */

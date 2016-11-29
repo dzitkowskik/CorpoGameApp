@@ -24,19 +24,18 @@ namespace CorpoGameApp.Data
 
             modelBuilder.Entity<Game>().ToTable("Game");
             modelBuilder.Entity<Player>().ToTable("Player").Property(t => t.Score).HasDefaultValue(0);
-
             modelBuilder.Entity<PlayerGames>().HasKey(x => new { x.PlayerId, x.GameId });
+
+            modelBuilder.Entity<PlayerGames>()
+                .HasOne(pc => pc.Player)
+                .WithMany(c => c.Games)
+                .HasForeignKey(pc => pc.PlayerId);
 
             modelBuilder.Entity<PlayerGames>()
                 .HasOne(pc => pc.Game)
                 .WithMany(p => p.Players)
                 .HasForeignKey(pc => pc.GameId);
         
-            modelBuilder.Entity<PlayerGames>()
-                .HasOne(pc => pc.Player)
-                .WithMany(c => c.Games)
-                .HasForeignKey(pc => pc.GameId);
-
             modelBuilder.Entity<Player>().HasOne(p => p.User).WithOne();
         }
     }

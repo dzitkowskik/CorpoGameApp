@@ -12,6 +12,8 @@ namespace CorpoGameApp.ViewModels.Game
         public int TeamCapacity { get; set; }
         public int NumberOfTeams { get; set; }
 
+        public string Error { get; set; }
+
         public NewGameViewModel(IEnumerable<Player> players, int numberOfTeams, int teamCapacity)
         {
             Players = players.OrderByDescending(t => t.Score).Select(t => new PlayerListItemViewModel(t));

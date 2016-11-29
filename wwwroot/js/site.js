@@ -37,7 +37,21 @@ var selectedPlayers = function(first, second) {
     });
 };
 
-$(function() {
+function refreshPlayerLists() {
     selectedPlayers('#firstTeamSelect', '#secondTeamSelect');
     selectedPlayers('#secondTeamSelect', '#firstTeamSelect');
-});
+    $('.selectpicker').selectpicker('refresh');
+}
+
+$(refreshPlayerLists());
+
+function createGame(actionUrl) {
+    var postData = {
+        "FirstTeam": $("#firstTeamSelect").val(),
+        "SecondTeam": $("#secondTeamSelect").val()
+    };
+    $.post(actionUrl, postData, function(result){
+        $("#gameDiv").html(result);
+        refreshPlayerLists();
+    });
+}

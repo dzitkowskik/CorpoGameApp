@@ -12,25 +12,38 @@ namespace CorpoGameApp.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IOptions<GameSettings> _options;
+        private readonly IPlayerServices _playerServices;
 
         public GameServices(
+            IPlayerServices playerServices,
             ApplicationDbContext context, 
             IOptions<GameSettings> options)
         {
             _context = context;
             _options = options;
+            _playerServices = playerServices;
         }
 
-        public bool CreateGame(Dictionary<Player, int> PlayerTeams)
+        public bool CreateGame(IEnumerable<IEnumerable<int>> PlayerTeams)
         {
+            var players = new List<PlayerGames>();
+
+            int teamId = 0;
+
+            foreach(var team in PlayerTeams)
+            {
+                players.AddRange(team.Select(t => 
+                    new PlayerGames(){ 
+                        PlayerId = t, 
+                        Team = teamId }));
+                teamId++;
+            }
+
             var game = new Game() { 
                 StartTime = DateTime.Now,
-                Players = PlayerTeams.Select(t => 
-                new PlayerGames {
-                    PlayerId = t.Key.Id,
-                    Team = t.Value
-                }).ToList()
+                Players = players
             };
+
             _context.Add(game);
             return _context.SaveChanges() > 0;
         }
