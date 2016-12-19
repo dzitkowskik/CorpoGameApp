@@ -38,9 +38,12 @@ var selectedPlayers = function(first, second) {
 };
 
 function refreshPlayerLists() {
-    selectedPlayers('#firstTeamSelect', '#secondTeamSelect');
-    selectedPlayers('#secondTeamSelect', '#firstTeamSelect');
-    $('.selectpicker').selectpicker('refresh');
+    var picker = $('.selectpicker');
+    if(picker.length > 0) {
+        selectedPlayers('#firstTeamSelect', '#secondTeamSelect');
+        selectedPlayers('#secondTeamSelect', '#firstTeamSelect');
+        picker.selectpicker('refresh');
+    }
 }
 
 $(refreshPlayerLists());
@@ -55,3 +58,12 @@ function createGame(actionUrl) {
         refreshPlayerLists();
     });
 }
+
+$(function(){
+    var clock = $('.current-game-clockdown').FlipClock(60, {
+        autoStart: false,
+        countdown: true,
+        clockFace: 'MinuteCounter'
+    });
+    clock.start();
+});

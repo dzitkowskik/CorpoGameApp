@@ -267,3 +267,12 @@ div.alert {
 .table-curved tr:last-child td:last-child {
     border-radius: 0 0 6px 0;
 }
+
+.current-game-clockdown {
+    width: 300px;
+    margin: 20px auto;
+}
+
+.flip-clock-label {
+    visibility: hidden;
+}
