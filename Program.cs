@@ -21,7 +21,7 @@ namespace CorpoGameApp
                 .UseConfiguration(config)
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseUrls("http://localhost:1234")
+                .UseUrls("http://localhost:4321")
                 .UseIISIntegration()
                 .UseStartup<Startup>()
                 .Build();

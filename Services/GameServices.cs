@@ -48,6 +48,11 @@ namespace CorpoGameApp.Services
             return _context.SaveChanges() > 0;
         }
 
+        public Game GetCurrentGame()
+        {
+            return _context.Games.FirstOrDefault(t => t.EndTime == null);
+        }
+
         public bool EndGame(int gameId, int? wonTeam)
         {
             var game = _context.Games.Single(t => t.Id == gameId);
@@ -67,6 +72,11 @@ namespace CorpoGameApp.Services
             game.EndTime = DateTime.Now;
             var result = _context.SaveChanges();
             return result > 0;
+        }
+
+        public Game GetPlayerLastGame(int playerId)
+        {
+            return _context.Games.FirstOrDefault(t => t.Players.Any(p => p.PlayerId == playerId));
         }
     }
 }

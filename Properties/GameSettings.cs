@@ -5,5 +5,6 @@ namespace CorpoGameApp.Properties
         public int PointsForDraw { get; set; }
         public int PointsForWin { get; set; }
         public int PointsForLose { get; set; }
+        public int GameDuration { get; set; }
     }
 }

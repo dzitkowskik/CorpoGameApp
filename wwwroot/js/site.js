@@ -60,7 +60,9 @@ function createGame(actionUrl) {
 }
 
 $(function(){
-    var clock = $('.current-game-clockdown').FlipClock(60, {
+    var secLeft = $('#current-game-clockdown-value').text();
+
+    var clock = $('.current-game-clockdown').FlipClock(secLeft, {
         autoStart: false,
         countdown: true,
         clockFace: 'MinuteCounter'

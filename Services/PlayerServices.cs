@@ -38,6 +38,11 @@ namespace CorpoGameApp.Services
             return _context.Players.Any(t => t.User.Id.Equals(userId));
         }
 
+        public Player GetUserPlayer(string userId)
+        {
+            return _context.Players.Include(p => p.User).FirstOrDefault(p => p.User.Id == userId);
+        }
+
         public void CreatePlayer(Player player)
         {
             _context.Add(player);

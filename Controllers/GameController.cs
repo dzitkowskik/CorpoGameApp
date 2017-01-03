@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using System;
+using Microsoft.Extensions.Options;
+using CorpoGameApp.Properties;
 
 namespace CorpoGameApp.Controllers
 {
@@ -18,15 +20,18 @@ namespace CorpoGameApp.Controllers
         private readonly IGameServices _gameServices;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPlayerServices _playerServices;
+        private readonly IOptions<GameSettings> _options;
 
         public GameController(
             IGameServices gameServices, 
             IPlayerServices playerServices,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IOptions<GameSettings> options)
         {
             _gameServices = gameServices;
             _userManager = userManager;
             _playerServices = playerServices;
+            _options = options;
         }
 
         [HttpGet]
@@ -34,9 +39,10 @@ namespace CorpoGameApp.Controllers
         {
             var gameViewModel = new GameViewModel() {
                 NewGame = GetNewGameViewModel(),
-                CurrentPlayer = GetCurrentPlayerViewModel()
+                CurrentPlayer = GetCurrentPlayerViewModel(),
+                CurrentGame = GetCurrentGameViewModel()
             };
-
+            
             return View(gameViewModel);
         }
 
@@ -108,6 +114,38 @@ namespace CorpoGameApp.Controllers
             var currentPlayerId = _userManager.GetUserId(User);
             var currentPlayer = players.FirstOrDefault(t => t.User.Id == currentPlayerId);
             return new PlayerViewModel(currentPlayer);
+        }
+
+        private CurrentGameViewModel GetCurrentGameViewModel()
+        {
+            var currentGame = _gameServices.GetCurrentGame();
+            if(currentGame != null)
+            {
+                var timeLeft = currentGame.StartTime.AddMinutes(_options.Value.GameDuration) - DateTime.Now;
+
+                // if time ledt is negative, finish the game
+                // players must fill the result later (at least one)                
+                if(timeLeft.TotalMilliseconds < 0) 
+                    _gameServices.EndGame(currentGame.Id, null);
+                else
+                    return new CurrentGameViewModel()
+                    {
+                        LastGameStart = currentGame.StartTime,
+                        TimeLeft = timeLeft,
+                        CurrentGameLasts = true
+                    };
+            }
+
+            // get last game of a player and check if it has a result
+            var currentUserId = _userManager.GetUserId(User);
+            var player = _playerServices.GetUserPlayer(currentUserId);
+            var lastGame = _gameServices.GetPlayerLastGame(player.Id);
+            if(lastGame != null && lastGame.WinnersTeam == null)
+            {
+                
+            }
+
+            return null;
         }
     }
 }

@@ -7,5 +7,7 @@ namespace CorpoGameApp.Services
     {
         bool CreateGame(IEnumerable<IEnumerable<int>> PlayerTeams);
         bool EndGame(int gameId, int? wonTeam);
+        Game GetCurrentGame();
+        Game GetPlayerLastGame(int playerId);
     }
 }
