@@ -15,6 +15,9 @@ namespace CorpoGameApp.Services
         private readonly IOptions<GameSettings> _options;
         private readonly IPlayerServices _playerServices;
 
+        private const int DrawReservedTeamNo = 0;
+
+
         public GameServices(
             IPlayerServices playerServices,
             ApplicationDbContext context, 
@@ -29,7 +32,7 @@ namespace CorpoGameApp.Services
         {
             var players = new List<PlayerGames>();
 
-            int teamId = 0;
+            int teamId = DrawReservedTeamNo+1;
 
             foreach(var team in PlayerTeams)
             {
@@ -64,7 +67,7 @@ namespace CorpoGameApp.Services
                 .ThenInclude(x => x.User)
                 .Single(t => t.Id == gameId);
             game.EndTime = DateTime.Now;
-            game.WinnersTeam = wonTeam;
+            game.WinnersTeam = wonTeam??DrawReservedTeamNo;
             
             foreach(var player in game.Players)
             {
