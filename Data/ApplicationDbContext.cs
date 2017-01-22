@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using CorpoGameApp.Models;
+using System;
 
 namespace CorpoGameApp.Data
 {
@@ -26,6 +27,10 @@ namespace CorpoGameApp.Data
             modelBuilder.Entity<Player>().ToTable("Player").Property(t => t.Score).HasDefaultValue(0);
             modelBuilder.Entity<PlayerGames>().HasKey(x => new { x.PlayerId, x.GameId });
 
+            modelBuilder.Entity<Game>()
+                .Property<DateTime?>(m => m.EndTime)
+                .IsRequired(false);
+
             modelBuilder.Entity<PlayerGames>()
                 .HasOne(pc => pc.Player)
                 .WithMany(c => c.Games)
@@ -36,7 +41,10 @@ namespace CorpoGameApp.Data
                 .WithMany(p => p.Players)
                 .HasForeignKey(pc => pc.GameId);
         
-            modelBuilder.Entity<Player>().HasOne(p => p.User).WithOne();
+            modelBuilder.Entity<Player>()
+                .HasOne(p => p.User)
+                .WithOne()
+                .HasForeignKey<Player>(x => x.UserForeignKey);
         }
     }
 }

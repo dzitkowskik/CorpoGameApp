@@ -4,6 +4,7 @@ using System.Linq;
 using CorpoGameApp.Data;
 using CorpoGameApp.Models;
 using CorpoGameApp.Properties;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace CorpoGameApp.Services
@@ -50,12 +51,18 @@ namespace CorpoGameApp.Services
 
         public Game GetCurrentGame()
         {
-            return _context.Games.FirstOrDefault(t => t.EndTime == null);
+            return _context.Games
+                .Include(x => x.Players)
+                .FirstOrDefault(t => t.EndTime == null);
         }
 
         public bool EndGame(int gameId, int? wonTeam)
         {
-            var game = _context.Games.Single(t => t.Id == gameId);
+            var game = _context.Games
+                .Include(g => g.Players)
+                .ThenInclude(p => p.Player)
+                .ThenInclude(x => x.User)
+                .Single(t => t.Id == gameId);
             game.EndTime = DateTime.Now;
             game.WinnersTeam = wonTeam;
             
@@ -76,7 +83,14 @@ namespace CorpoGameApp.Services
 
         public Game GetPlayerLastGame(int playerId)
         {
-            return _context.Games.FirstOrDefault(t => t.Players.Any(p => p.PlayerId == playerId));
+            var lastGame = _context.Games
+                .Include(x => x.Players)
+                .ThenInclude(t => t.Player)
+                .ThenInclude(t => t.User)
+                .Where(t => t.Players.Any(p => p.PlayerId == playerId))
+                .OrderByDescending(t => t.StartTime)
+                .FirstOrDefault();
+            return lastGame;
         }
     }
 }

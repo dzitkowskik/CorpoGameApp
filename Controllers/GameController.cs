@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using Microsoft.Extensions.Options;
 using CorpoGameApp.Properties;
+using System.Collections.Generic;
 
 namespace CorpoGameApp.Controllers
 {
@@ -94,9 +95,9 @@ namespace CorpoGameApp.Controllers
         {
             if(ModelState.IsValid)
             {
-               
+               _gameServices.EndGame(model.GameId, model.WinningTeam);
             }
-            else return PartialView("", model);
+            else return PartialView("Partial/CurrentGame", model);
 
             return RedirectToAction("Index");
         }
@@ -118,8 +119,11 @@ namespace CorpoGameApp.Controllers
 
         private CurrentGameViewModel GetCurrentGameViewModel()
         {
+            var currentUserId = _userManager.GetUserId(User);
+            var player = _playerServices.GetUserPlayer(currentUserId);
+
             var currentGame = _gameServices.GetCurrentGame();
-            if(currentGame != null)
+            if(currentGame != null && !currentGame.Players.Any(t => t.PlayerId == player.Id))
             {
                 var timeLeft = currentGame.StartTime.AddMinutes(_options.Value.GameDuration) - DateTime.Now;
 
@@ -132,17 +136,25 @@ namespace CorpoGameApp.Controllers
                     {
                         LastGameStart = currentGame.StartTime,
                         TimeLeft = timeLeft,
-                        CurrentGameLasts = true
+                        CurrentGameLasts = true,
+                        GameId = currentGame.Id
                     };
             }
 
             // get last game of a player and check if it has a result
-            var currentUserId = _userManager.GetUserId(User);
-            var player = _playerServices.GetUserPlayer(currentUserId);
             var lastGame = _gameServices.GetPlayerLastGame(player.Id);
             if(lastGame != null && lastGame.WinnersTeam == null)
             {
-                
+                var teams = lastGame.Players
+                    .Where(p => p.Player != null)
+                    .GroupBy(t => t.Team, v => v.Player.ToString())
+                    .ToDictionary(x => x.Key, y => (IList<string>)y.ToList());
+                return new CurrentGameViewModel()
+                {
+                    GameId = lastGame.Id,
+                    CurrentGameLasts = false,
+                    Teams = teams
+                };
             }
 
             return null;

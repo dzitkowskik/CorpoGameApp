@@ -13,11 +13,12 @@ namespace CorpoGameApp.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.0.1");
+                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
 
             modelBuilder.Entity("CorpoGameApp.Models.ApplicationUser", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
 
@@ -25,7 +26,7 @@ namespace CorpoGameApp.Migrations
                         .IsConcurrencyToken();
 
                     b.Property<string>("Email")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
 
@@ -34,10 +35,10 @@ namespace CorpoGameApp.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedUserName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("PasswordHash");
 
@@ -50,7 +51,7 @@ namespace CorpoGameApp.Migrations
                     b.Property<bool>("TwoFactorEnabled");
 
                     b.Property<string>("UserName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
@@ -93,11 +94,11 @@ namespace CorpoGameApp.Migrations
 
                     b.Property<string>("Surname");
 
-                    b.Property<string>("UserId");
+                    b.Property<string>("UserForeignKey");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("UserForeignKey")
                         .IsUnique();
 
                     b.ToTable("Player");
@@ -115,27 +116,27 @@ namespace CorpoGameApp.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.HasIndex("PlayerId");
-
                     b.ToTable("PlayerGames");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
                     b.Property<string>("Name")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
+                        .IsUnique()
                         .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
@@ -207,8 +208,6 @@ namespace CorpoGameApp.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("AspNetUserRoles");
                 });
 
@@ -231,7 +230,7 @@ namespace CorpoGameApp.Migrations
                 {
                     b.HasOne("CorpoGameApp.Models.ApplicationUser", "User")
                         .WithOne()
-                        .HasForeignKey("CorpoGameApp.Models.Player", "UserId");
+                        .HasForeignKey("CorpoGameApp.Models.Player", "UserForeignKey");
                 });
 
             modelBuilder.Entity("CorpoGameApp.Models.PlayerGames", b =>

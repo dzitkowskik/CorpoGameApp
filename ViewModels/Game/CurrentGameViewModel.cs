@@ -10,11 +10,7 @@ namespace CorpoGameApp.ViewModels.Game
         public double SecondsLeft { get { return TimeLeft.TotalSeconds; } }
         public bool CurrentGameLasts { get; set; }
         public int GameId { get; set; }
-        public int WinningTeam { get; set; }
+        public int? WinningTeam { get; set; }
         public IDictionary<int, IList<string>> Teams { get; set; }
-
-        public CurrentGameViewModel()
-        {
-        }
     }
 }
