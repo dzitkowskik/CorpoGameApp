@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using CorpoGameApp.Models;
 
 namespace CorpoGameApp.Services
@@ -11,5 +12,6 @@ namespace CorpoGameApp.Services
         Player GetUserPlayer(string userId);
         void CreatePlayer(Player player);
         void UpdatePlayer(Player player);
+        IQueryable<Player> GetTopPlayers(int noOfTopPlayers);
     }
 }

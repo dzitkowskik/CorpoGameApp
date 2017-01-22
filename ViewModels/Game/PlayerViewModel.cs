@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using CorpoGameApp.Models;
 
 namespace CorpoGameApp.ViewModels.Game
@@ -11,7 +9,6 @@ namespace CorpoGameApp.ViewModels.Game
 
         public PlayerViewModel()
         {
-            
         }
 
         public PlayerViewModel(Player player)
@@ -23,4 +20,4 @@ namespace CorpoGameApp.ViewModels.Game
             }
         }
     }
-}
+}                   

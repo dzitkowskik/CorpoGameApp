@@ -65,6 +65,7 @@ namespace CorpoGameApp
             // Add application services.
             services.AddTransient<IGameServices, GameServices>();
             services.AddTransient<IPlayerServices, PlayerServices>();
+            services.AddTransient<IStatisticsServices, StatisticsServices>();
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
             services.AddSingleton<IConfigurationRoot>(Configuration);

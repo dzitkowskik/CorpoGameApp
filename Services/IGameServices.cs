@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using CorpoGameApp.Models;
 
 namespace CorpoGameApp.Services
@@ -9,5 +10,6 @@ namespace CorpoGameApp.Services
         bool EndGame(int gameId, int? wonTeam);
         Game GetCurrentGame();
         Game GetPlayerLastGame(int playerId);
+        IQueryable<Game> GetLastNGames(int lastGamesCount);
     }
 }

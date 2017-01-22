@@ -191,9 +191,7 @@ div.alert {
 
 #stats table {
     width: 75%;
-    margin-top: 5%;
-    margin-left: auto; 
-    margin-right: auto;
+    margin: 0 auto 20px auto;
     border-color: black;
 }
 
@@ -213,8 +211,8 @@ div.alert {
 }
 
 .carousel-indicators {
-    bottom: 0;
-    margin-bottom: -20%;
+    position: initial;
+    margin: 20px auto;
 }
 
 .carousel-indicators li {
@@ -229,7 +227,7 @@ div.alert {
     background-color: #fff;
     border: 3px solid #fff !important;
     height: 13px;
-    margin: 5px;
+    margin: 4px;
     width: 13px;
 }
 

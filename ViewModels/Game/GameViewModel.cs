@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using CorpoGameApp.Models;
 
 namespace CorpoGameApp.ViewModels.Game
 {
@@ -10,6 +7,7 @@ namespace CorpoGameApp.ViewModels.Game
         public NewGameViewModel NewGame { get; set; }
         public CurrentGameViewModel CurrentGame { get; set; }
         public PlayerViewModel CurrentPlayer { get; set; }
+        public IEnumerable<StatisticsViewModel> Statistics { get; set; }
         public bool IsAnyGameInProgress { get { return CurrentGame != null; } }
     }
 }

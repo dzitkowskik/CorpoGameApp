@@ -57,5 +57,14 @@ namespace CorpoGameApp.Services
             _context.Update(dbPlayer);
             _context.SaveChanges();
         }
+
+        public IQueryable<Player> GetTopPlayers(int noOfTopPlayers)
+        {
+            return _context.Players
+                .Include(player => player.Games)
+                    .ThenInclude(game => game.Game)
+                .OrderByDescending(t => t.Score)
+                .Take(noOfTopPlayers);
+        }
     }
 }

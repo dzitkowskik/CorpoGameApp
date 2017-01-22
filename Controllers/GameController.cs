@@ -22,16 +22,19 @@ namespace CorpoGameApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPlayerServices _playerServices;
         private readonly IOptions<GameSettings> _options;
+        private readonly IStatisticsServices _statiticsServices;
 
         public GameController(
             IGameServices gameServices, 
             IPlayerServices playerServices,
+            IStatisticsServices statisticsServices,
             UserManager<ApplicationUser> userManager,
             IOptions<GameSettings> options)
         {
             _gameServices = gameServices;
             _userManager = userManager;
             _playerServices = playerServices;
+            _statiticsServices = statisticsServices;
             _options = options;
         }
 
@@ -41,7 +44,12 @@ namespace CorpoGameApp.Controllers
             var gameViewModel = new GameViewModel() {
                 NewGame = GetNewGameViewModel(),
                 CurrentPlayer = GetCurrentPlayerViewModel(),
-                CurrentGame = GetCurrentGameViewModel()
+                CurrentGame = GetCurrentGameViewModel(),
+                Statistics = new List<StatisticsViewModel>()
+                {
+                    _statiticsServices.GetTopPlayersStatistic(),
+                    _statiticsServices.GetLastGamesStatistic()
+                }
             };
             
             return View(gameViewModel);

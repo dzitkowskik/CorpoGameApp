@@ -15,8 +15,7 @@ namespace CorpoGameApp.Services
         private readonly IOptions<GameSettings> _options;
         private readonly IPlayerServices _playerServices;
 
-        private const int DrawReservedTeamNo = 0;
-
+        public const int DrawReservedTeamNo = 0;
 
         public GameServices(
             IPlayerServices playerServices,
@@ -94,6 +93,16 @@ namespace CorpoGameApp.Services
                 .OrderByDescending(t => t.StartTime)
                 .FirstOrDefault();
             return lastGame;
+        }
+
+        public IQueryable<Game> GetLastNGames(int lastGamesCount)
+        {
+            return _context.Games
+                .Where(t => t.EndTime != null)
+                .OrderByDescending(t => t.EndTime)
+                .Take(lastGamesCount)
+                .Include(t => t.Players)
+                .ThenInclude(t => t.Player);
         }
     }
 }
