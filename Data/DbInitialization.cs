@@ -4,12 +4,9 @@ namespace CorpoGameApp.Data {
 
     public class DbInitialization
     {
-        public static void Initialize(DbContextOptions<ApplicationDbContext> options)
+        public static void Initialize(ApplicationDbContext context)
         {
-            using (var context = new ApplicationDbContext(options))
-            {
-                context.Database.Migrate();
-            }
+            context.Database.Migrate();
         }
     }
 
