@@ -24,9 +24,15 @@ namespace CorpoGameApp.Data
             // Add your customizations after calling base.OnModelCreating(builder);
 
             modelBuilder.Entity<Game>().ToTable("Game");
-            modelBuilder.Entity<Player>().ToTable("Player").Property(t => t.Score).HasDefaultValue(0);
-            modelBuilder.Entity<PlayerGames>().HasKey(x => new { x.PlayerId, x.GameId });
+            modelBuilder.Entity<Player>(t => 
+            {
+                t.ToTable("Player");
+                t.Property(x => x.Id).ValueGeneratedOnAdd();
+                t.Property(x => x.Score).HasDefaultValue(0);
+            });
 
+            modelBuilder.Entity<PlayerGames>().HasKey(x => new { x.PlayerId, x.GameId });
+            
             modelBuilder.Entity<Game>()
                 .Property<DateTime?>(m => m.EndTime)
                 .IsRequired(false);
