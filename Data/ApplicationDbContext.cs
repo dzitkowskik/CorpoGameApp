@@ -25,12 +25,14 @@ namespace CorpoGameApp.Data
 
             modelBuilder.Entity<Game>(t =>
             {
+                t.ToTable("Game");
                 t.HasKey(x => x.Id);
                 t.Property<DateTime?>(m => m.EndTime).IsRequired(false);
             });
 
             modelBuilder.Entity<Player>(t => 
             {
+                t.ToTable("Player");
                 t.HasKey(x => x.Id);
                 t.Property(x => x.Score).HasDefaultValue(0);
                 t.HasOne(p => p.User)
