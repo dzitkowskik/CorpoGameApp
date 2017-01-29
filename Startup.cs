@@ -20,7 +20,7 @@ namespace CorpoGameApp
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                .AddEnvironmentVariables();
 
             if (env.IsDevelopment())
             {
@@ -28,7 +28,6 @@ namespace CorpoGameApp
                 builder.AddUserSecrets();
             }
 
-            builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
             _environment = env;
@@ -49,7 +48,7 @@ namespace CorpoGameApp
             else
             {
                 services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
+                    options.UseSqlServer(Configuration["SQLAZURECONNSTR_SqlConnection"]));
             }            
             
             // Identity settings
