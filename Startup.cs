@@ -9,6 +9,7 @@ using CorpoGameApp.Data;
 using CorpoGameApp.Models;
 using CorpoGameApp.Services;
 using CorpoGameApp.Properties;
+using System;
 
 namespace CorpoGameApp
 {
@@ -83,15 +84,20 @@ namespace CorpoGameApp
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            loggerFactory.AddAzureWebAppDiagnostics();
+
+            var logger = loggerFactory.CreateLogger("Startup.Configure");
 
             if (env.IsDevelopment())
             {
+                logger.LogInformation("Using development environment");
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
                 app.UseBrowserLink();
             }
             else
             {
+                logger.LogInformation("Using production environment");
                 app.UseExceptionHandler("/Home/Error");
             }
 
@@ -108,7 +114,14 @@ namespace CorpoGameApp
                     template: "{controller=Game}/{action=Index}/{id?}");
             });
 
-            DbInitialization.Initialize(context);
+            try
+            {
+                DbInitialization.Initialize(context);
+            }
+            catch(Exception ex)
+            {
+                logger.LogError("Error {0} occured", ex.Message);
+            }
         }
     }
 }
