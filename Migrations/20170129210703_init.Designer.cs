@@ -8,8 +8,8 @@ using CorpoGameApp.Data;
 namespace CorpoGameApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170129200834_PlayerIdIdentity")]
-    partial class PlayerIdIdentity
+    [Migration("20170129210703_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
