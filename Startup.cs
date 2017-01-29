@@ -48,7 +48,7 @@ namespace CorpoGameApp
             else
             {
                 services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(Configuration["SQLAZURECONNSTR_SqlConnection"]));
+                    options.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
             }            
             
             // Identity settings
