@@ -23,34 +23,30 @@ namespace CorpoGameApp.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-            modelBuilder.Entity<Game>().ToTable("Game");
-            modelBuilder.Entity<Player>(t => 
+            modelBuilder.Entity<Game>(t =>
             {
-                t.ToTable("Player");
-                t.Property(x => x.Id).ValueGeneratedOnAdd();
-                t.Property(x => x.Score).HasDefaultValue(0);
+                t.HasKey(x => x.Id);
+                t.Property<DateTime?>(m => m.EndTime).IsRequired(false);
             });
 
-            modelBuilder.Entity<PlayerGames>().HasKey(x => new { x.PlayerId, x.GameId });
-            
-            modelBuilder.Entity<Game>()
-                .Property<DateTime?>(m => m.EndTime)
-                .IsRequired(false);
+            modelBuilder.Entity<Player>(t => 
+            {
+                t.HasKey(x => x.Id);
+                t.Property(x => x.Score).HasDefaultValue(0);
+                t.HasOne(p => p.User)
+                    .WithOne()
+                    .HasForeignKey<Player>(x => x.UserForeignKey);
+            });
 
-            modelBuilder.Entity<PlayerGames>()
-                .HasOne(pc => pc.Player)
-                .WithMany(c => c.Games)
-                .HasForeignKey(pc => pc.PlayerId);
-
-            modelBuilder.Entity<PlayerGames>()
-                .HasOne(pc => pc.Game)
-                .WithMany(p => p.Players)
-                .HasForeignKey(pc => pc.GameId);
-        
-            modelBuilder.Entity<Player>()
-                .HasOne(p => p.User)
-                .WithOne()
-                .HasForeignKey<Player>(x => x.UserForeignKey);
+            modelBuilder.Entity<PlayerGames>(t => {
+                t.HasKey(x => new { x.PlayerId, x.GameId });
+                t.HasOne(pc => pc.Player)
+                    .WithMany(c => c.Games)
+                    .HasForeignKey(pc => pc.PlayerId);
+                t.HasOne(pc => pc.Game)
+                    .WithMany(p => p.Players)
+                    .HasForeignKey(pc => pc.GameId);
+            });
         }
     }
 }
