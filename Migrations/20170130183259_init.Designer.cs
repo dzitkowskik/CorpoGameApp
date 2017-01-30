@@ -8,13 +8,14 @@ using CorpoGameApp.Data;
 namespace CorpoGameApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170129210703_init")]
+    [Migration("20170130183259_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
+                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("CorpoGameApp.Models.ApplicationUser", b =>
                 {
@@ -85,7 +86,8 @@ namespace CorpoGameApp.Migrations
             modelBuilder.Entity("CorpoGameApp.Models.Player", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name");
 
