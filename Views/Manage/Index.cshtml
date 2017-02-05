@@ -1,71 +1,58 @@
-@model IndexViewModel
+@model ManageAccountViewModel
 @{
     ViewData["Title"] = "Manage your account";
 }
 
-<h2>@ViewData["Title"].</h2>
-<p class="text-success">@ViewData["StatusMessage"]</p>
+<section id="manage" class="default-section first-section">
+    <div class="container">
 
-<div>
-    <h4>Change your account settings</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>Password:</dt>
-        <dd>
-            @if (Model.HasPassword)
-            {
-                <a asp-controller="Manage" asp-action="ChangePassword" class="btn-bracketed">Change</a>
-            }
-            else
-            {
-                <a asp-controller="Manage" asp-action="SetPassword" class="btn-bracketed">Create</a>
-            }
-        </dd>
-        <dt>External Logins:</dt>
-        <dd>
+        <div class="row">
+            <div class="col-sm-12">
+                <h2>@ViewData["Title"].</h2>
+                <p class="text-success">@ViewData["StatusMessage"]</p>
+            </div>
+        </div>
 
-            @Model.Logins.Count <a asp-controller="Manage" asp-action="ManageLogins" class="btn-bracketed">Manage</a>
-        </dd>
-        <dt>Phone Number:</dt>
-        <dd>
-            <p>
-                Phone Numbers can used as a second factor of verification in two-factor authentication.
-                See <a href="https://go.microsoft.com/fwlink/?LinkID=532713">this article</a>
-                for details on setting up this ASP.NET application to support two-factor authentication using SMS.
-            </p>
-            @*@(Model.PhoneNumber ?? "None")
-                @if (Model.PhoneNumber != null)
-                {
-                    <br />
-                    <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn-bracketed">Change</a>
-                    <form asp-controller="Manage" asp-action="RemovePhoneNumber" method="post">
-                        [<button type="submit" class="btn-link">Remove</button>]
-                    </form>
+        <div class="row">
+            <div class="col-sm-6">
+                <h4>Change your password:</h4>
+            </div>
+            <div class="col-sm-6">
+                <form asp-controller="Manage" asp-action="ChangePassword" method="post" class="form-horizontal">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="OldPassword" class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="OldPassword" class="form-control" />
+                            <span asp-validation-for="OldPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewPassword" class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="NewPassword" class="form-control" />
+                            <span asp-validation-for="NewPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="ConfirmPassword" class="form-control" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <button type="submit" class="btn btn-default">Change password</button>
+                        </div>
+                    </div>
+                </form>
+
+                @section Scripts {
+                    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
                 }
-                else
-                {
-                    <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn-bracketed">Add</a>
-                }*@
-        </dd>
 
-        <dt>Two-Factor Authentication:</dt>
-        <dd>
-            <p>
-                There are no two-factor authentication providers configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532713">this article</a>
-                for setting up this application to support two-factor authentication.
-            </p>
-            @*@if (Model.TwoFactor)
-                {
-                    <form asp-controller="Manage" asp-action="DisableTwoFactorAuthentication" method="post" class="form-horizontal">
-                        Enabled <button type="submit" class="btn-link btn-bracketed">Disable</button>
-                    </form>
-                }
-                else
-                {
-                    <form asp-controller="Manage" asp-action="EnableTwoFactorAuthentication" method="post" class="form-horizontal">
-                        <button type="submit" class="btn-link btn-bracketed">Enable</button> Disabled
-                    </form>
-                }*@
-        </dd>
-    </dl>
-</div>
+            </div>
+        </div>
+    </div>
+</section>
