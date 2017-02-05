@@ -1,11 +1,4 @@
-body {
-    width: 100%;
-    height: 100%;
-}
-
 html {
-    width: 100%;
-    height: 100%;
     background: #222222 no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -19,6 +12,16 @@ footer {
 }
 
 @media(min-width:767px) {
+    body {
+        width: 100%;
+        height: 100%;
+    }
+
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
     .navbar {
         padding: 20px 0;
         -webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
@@ -118,9 +121,22 @@ div.alert {
     height: 50%;
     padding-top: 150px;
     text-align: center;
-    background: url('/images/foosball-video-picture.jpg');
     background-size: cover;
     color: #9d9d9d;
+}
+
+@media (min-width: 400px) {
+    .intro-section {
+        background: url('/images/foosball-video-picture-small.jpg');
+        background-size: cover;
+    }
+}
+
+@media (min-width: 800px) {
+    .intro-section {
+        background: url('/images/foosball-video-picture.jpg');
+        background-size: cover;
+    }
 }
 
 .reservation-section {
@@ -129,11 +145,6 @@ div.alert {
     text-align: center;
     background: #222222;
     color: #9d9d9d;
-    /*background: url('/images/foosball-video-picture.jpg');*/
-    /*background-size: cover;*/
-    /*background-position-y: -750px;*/
-    /*background-blend-mode: color-burn;*/
-    /*background-repeat: no-repeat;*/
 }
 
 .stats-section {
