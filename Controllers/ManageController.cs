@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using CorpoGameApp.Models;
 using CorpoGameApp.Services;
 using CorpoGameApp.ViewModels.Manage;
+using System;
 
 namespace CorpoGameApp.Controllers
 {
@@ -41,11 +42,8 @@ namespace CorpoGameApp.Controllers
         {
             ViewData["StatusMessage"] =
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
                 : message == ManageMessageId.Error ? "An error has occurred."
-                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
-                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                : message == ManageMessageId.UpdatePlayerSuccess ? "Player updated successfully."
                 : "";
 
             var user = await GetCurrentUserAsync();
@@ -58,13 +56,46 @@ namespace CorpoGameApp.Controllers
 
             var model = new ManageAccountViewModel
             {
-                Id = player.Id,
                 Name = player.Name,
                 Surname = player.Surname,
                 Email = user.Email,
                 HasPassword = await _userManager.HasPasswordAsync(user)
             };
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update(ManageAccountViewModel model)
+        {
+            if(!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                var player = _playerServices.GetUserPlayer(user.Id);
+                if(player != null)
+                {
+                    try
+                    {
+                        player.Name = model.Name;
+                        player.Surname = model.Surname;
+                        player.User.Email = model.Email;
+                        _playerServices.UpdatePlayer(player);
+                        return RedirectToAction(nameof(Index), new { Message = ManageMessageId.UpdatePlayerSuccess });
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.LogError(null, ex, "Cannot update player");
+                        ModelState.AddModelError(string.Empty, "Cannot update player");
+                        return View(model);
+                    }
+                }
+            }
+            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
         }
 
         [HttpPost]
@@ -103,13 +134,8 @@ namespace CorpoGameApp.Controllers
 
         public enum ManageMessageId
         {
-            AddPhoneSuccess,
-            AddLoginSuccess,
+            UpdatePlayerSuccess,
             ChangePasswordSuccess,
-            SetTwoFactorSuccess,
-            SetPasswordSuccess,
-            RemoveLoginSuccess,
-            RemovePhoneSuccess,
             Error
         }
 

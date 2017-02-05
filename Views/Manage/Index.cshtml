@@ -12,47 +12,29 @@
                 <p class="text-success">@ViewData["StatusMessage"]</p>
             </div>
         </div>
-
+        <div class="row">
+            <div class="col-sm-6">
+                <h4>Change user information:</h4>
+            </div>
+            <div class="col-sm-6">
+                @Html.Partial("Partial/UpdateAccount.cshtml", Model)
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-6">
                 <h4>Change your password:</h4>
             </div>
             <div class="col-sm-6">
-                <form asp-controller="Manage" asp-action="ChangePassword" method="post" class="form-horizontal">
-                    <div asp-validation-summary="All" class="text-danger"></div>
-                    <div class="form-group">
-                        <label asp-for="OldPassword" class="col-md-2 control-label"></label>
-                        <div class="col-md-10">
-                            <input asp-for="OldPassword" class="form-control" />
-                            <span asp-validation-for="OldPassword" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="NewPassword" class="col-md-2 control-label"></label>
-                        <div class="col-md-10">
-                            <input asp-for="NewPassword" class="form-control" />
-                            <span asp-validation-for="NewPassword" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
-                        <div class="col-md-10">
-                            <input asp-for="ConfirmPassword" class="form-control" />
-                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <button type="submit" class="btn btn-default">Change password</button>
-                        </div>
-                    </div>
-                </form>
-
-                @section Scripts {
-                    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+                @if(Model.HasPassword) {
+                    @Html.Partial(
+                        "Partial/ChangePassword.cshtml", 
+                        new ChangePasswordViewModel())
                 }
-
             </div>
         </div>
     </div>
 </section>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

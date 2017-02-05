@@ -4,9 +4,6 @@ namespace CorpoGameApp.ViewModels.Manage
 {
     public class ManageAccountViewModel
     {
-        [Required]        
-        public int Id { get; set; }
-
         [Required]      
         public string Name { get; set; }
 
