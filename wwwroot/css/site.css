@@ -62,13 +62,6 @@ section#reservation.reservation-section div.show-tick button {
     padding-right: 15px;
 }
 
-/* Set widths on the form inputs since otherwise they're 100% wide */
-input,
-select,
-textarea {
-    max-width: 280px;
-}
-
 td.text-center {
     max-width: 280px;
 }
@@ -104,10 +97,14 @@ div.alert {
 
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
-  /* Hide captions */
-  .carousel-caption {
-    display: none
-  }
+    /* Hide captions */
+    .carousel-caption {
+        display: none
+    }
+
+    #player_img {
+        width: 250px;
+    }
 }
 
 .body-content {
@@ -123,6 +120,24 @@ div.alert {
     text-align: center;
     background-size: cover;
     color: #9d9d9d;
+}
+
+@media (min-width: 100px) and (max-width: 400px) {
+    .intro-section {
+        background: url('/images/foosball-video-picture-xsmall.jpg');
+        background-size: cover;
+        height: 200px;
+        padding: 50px;
+        font-size: small;
+    }
+
+    .intro-section h1 {
+        font-size: large;
+    }
+
+    .table tbody tr th, .table tbody tr td, .table thead tr th {
+        font-size: x-small;
+    }
 }
 
 @media (min-width: 400px) {
@@ -169,7 +184,7 @@ div.alert {
 }
 
 #player_img {
-    max-height: 25% 
+    max-height: 25%;
 }
 
 /*section {
@@ -218,7 +233,6 @@ div.alert {
 
 #stats table th {
     border: black;
-    font-size: 18px;
 }
 
 .carousel-indicators {
@@ -244,6 +258,8 @@ div.alert {
 
 .carousel-control.left, .carousel-control.right {
     background: rgba(0, 0, 0, 0);
+    margin-right: -25px;
+    margin-left: -25px;
 }
 
 .table-curved {

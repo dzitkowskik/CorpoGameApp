@@ -8,33 +8,32 @@
     </div>
 }
 
-<table class="table">
-    <tr>
-        <th class="text-center"><h2>First team</h2></th>
-        <th></th>
-        <th class="text-center"><h2>Second team</h2></th>
-    </tr>
-    <tr>
-        <td class="text-center">
-            <select id="firstTeamSelect" name="FirstTeamSelect" class="selectpicker input-lg" data-live-search="true" multiple>
-                <optgroup label="First Team" data-max-options="2">
-                @foreach(var player in Model.Players) {
-                    <option value="@player.Id">@player.Name @player.Surname (score: @player.Score)</option>
-                }
-                </optgroup>
-            </select>
-        </td>
-        <td>
+<div class="row">
+    <div class="col-sm-6">
+        <h2>1st team</h2>
+        <select id="firstTeamSelect" name="FirstTeamSelect" class="selectpicker input-lg" data-live-search="true" multiple>
+            <optgroup label="First Team" data-max-options="2">
+            @foreach(var player in Model.Players) {
+                <option value="@player.Id">@player.Name @player.Surname (score: @player.Score)</option>
+            }
+            </optgroup>
+        </select>
+    </div>
+    <div class="col-sm-6">
+        <h2>2nd team</h2>
+        <select id="secondTeamSelect" name="SecondTeamSelect" class="selectpicker input-lg" data-live-search="true" multiple>
+            <optgroup label="Second Team" data-max-options="2">
+            @foreach(var player in Model.Players) {
+                <option value="@player.Id">@player.Name @player.Surname (score: @player.Score)</option>
+            }
+            </optgroup>
+        </select>
+    </div>
+</div>
+<div class=row>
+    <div class="col-sm-12">
+        <div class="col-sm-12">
             <button class="btn btn-default btn-lg btn-block btn-danger" type="button" onclick="createGame('@Url.Action("Create", "Game")');">CREATE</button>
-        </td>
-        <td class="text-center">
-            <select id="secondTeamSelect" name="SecondTeamSelect" class="selectpicker input-lg" data-live-search="true" multiple>
-                <optgroup label="Second Team" data-max-options="2">
-                @foreach(var player in Model.Players) {
-                    <option value="@player.Id">@player.Name @player.Surname (score: @player.Score)</option>
-                }
-                </optgroup>
-            </select>
-        </td>
-    </tr>
-</table>
+        <div class="btn-group">
+    </div>
+</div>
