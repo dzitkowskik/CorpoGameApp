@@ -56,25 +56,6 @@ namespace CorpoGameApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdatePlayer(GameViewModel model)
-        {
-            if(ModelState.IsValid)
-            {
-                var currentPlayerId = _userManager.GetUserId(User);
-                var updatedPlayer = new Player()
-                {
-                    User = new ApplicationUser() { Id = currentPlayerId },
-                    Name = model.CurrentPlayer.Name,
-                    Surname = model.CurrentPlayer.Surname
-                };
-                _playerServices.UpdatePlayer(updatedPlayer);
-            }
-            else return View(model);
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
         public IActionResult Create(CreateGameViewModel model)
         {
             var newGameViewModel = GetNewGameViewModel();

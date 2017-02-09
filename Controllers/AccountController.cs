@@ -115,6 +115,8 @@ namespace CorpoGameApp.Controllers
                     if(!_playerServices.PlayerExists(user.Id))
                     {
                         var newPlayer = new Player(){
+                            Name = model.Name,
+                            Surname = model.Surname,
                             User = user,
                             Score = 0
                         };
