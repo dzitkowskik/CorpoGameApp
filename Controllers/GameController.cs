@@ -9,18 +9,17 @@ using System;
 using Microsoft.Extensions.Options;
 using CorpoGameApp.Properties;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CorpoGameApp.Controllers
 {
     [Authorize]
-    public class GameController : Controller
+    public class GameController : BaseController
     {
         private const int TEAM_NUMBER = 2;
         private const int TEAM_SIZE = 2;
 
         private readonly IGameServices _gameServices;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IPlayerServices _playerServices;
         private readonly IOptions<GameSettings> _options;
         private readonly IStatisticsServices _statiticsServices;
 
@@ -29,21 +28,19 @@ namespace CorpoGameApp.Controllers
             IPlayerServices playerServices,
             IStatisticsServices statisticsServices,
             UserManager<ApplicationUser> userManager,
-            IOptions<GameSettings> options)
+            IOptions<GameSettings> options) : base(userManager, playerServices)
         {
             _gameServices = gameServices;
-            _userManager = userManager;
-            _playerServices = playerServices;
             _statiticsServices = statisticsServices;
             _options = options;
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var gameViewModel = new GameViewModel() {
                 NewGame = GetNewGameViewModel(),
-                CurrentPlayer = GetCurrentPlayerViewModel(),
+                CurrentPlayer = await GetCurrentPlayerViewModel(),
                 CurrentGame = GetCurrentGameViewModel(),
                 Statistics = new List<StatisticsViewModel>()
                 {
@@ -98,11 +95,9 @@ namespace CorpoGameApp.Controllers
             return newGameViewModel;
         }
 
-        private PlayerViewModel GetCurrentPlayerViewModel()
+        private async Task<PlayerViewModel> GetCurrentPlayerViewModel()
         {
-            var players = _playerServices.GetAllPlayers();            
-            var currentPlayerId = _userManager.GetUserId(User);
-            var currentPlayer = players.FirstOrDefault(t => t.User.Id == currentPlayerId);
+            var currentPlayer = await GetCurrentPlayer();
             return new PlayerViewModel(currentPlayer);
         }
 

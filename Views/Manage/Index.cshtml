@@ -1,6 +1,7 @@
 @model ManageAccountViewModel
 @{
     ViewData["Title"] = "Manage your account";
+    var statusClass = (bool)ViewData["IsStatusError"] ? "text-danger" : "text-success";
 }
 
 <section id="manage" class="default-section first-section">
@@ -9,7 +10,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <h2>@ViewData["Title"].</h2>
-                <p class="text-success">@ViewData["StatusMessage"]</p>
+                <p class="@statusClass">@ViewData["StatusMessage"]</p>
             </div>
         </div>
         <div class="row">
@@ -30,6 +31,29 @@
                         "Partial/ChangePassword.cshtml", 
                         new ChangePasswordViewModel())
                 }
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <h4>Change your avatar:</h4>
+        </div>
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-12">
+                    <img src="@Model.Avatar" alt="Avatar" class="img-circle avatar-img">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <form method="post" asp-action="UpdateAvatar" asp-controller="Manage" enctype="multipart/form-data" role="form">
+                        <div class="form-group">
+                            <label class="btn btn-lg btn-primary" for="my-file-selector">
+                                <input id="my-file-selector" type="file" name="file" style="display: none;" />
+                                Select Picture...
+                            </label>
+                            <input class="btn btn-lg" type="submit" value="Upload!" />
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

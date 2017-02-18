@@ -16,6 +16,7 @@ namespace CorpoGameApp.Models
         public virtual ApplicationUser User { get; set; }
         public int Score { get; set; }
         public virtual ICollection<PlayerGames> Games { get; set; }
+        public string Avatar { get; set; }
 
         public override string ToString()
         {
