@@ -12,11 +12,12 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Net.Http.Headers;
 using System.Linq;
+using CorpoGameApp.Controllers.Enums;
 
 namespace CorpoGameApp.Controllers
 {
     [Authorize]
-    public class ManageController : BaseController
+    public partial class ManageController : BaseController
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -45,7 +46,7 @@ namespace CorpoGameApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(ManageMessageId? message = null)
+        public async Task<IActionResult> Index(ManageMessageType? message = null)
         {
             ViewData["StatusMessage"] = GetStatusMessageText(message);
             ViewData["IsStatusError"] = IsStatusMessageAnError(message);
@@ -83,7 +84,7 @@ namespace CorpoGameApp.Controllers
             try
             {
                 if(!IsTheFileCompatible(file))
-                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.FileNotCompatible });
+                    return RedirectToAction(nameof(Index), new { Message = ManageMessageType.FileNotCompatible });
 
                 // Save uploaded file
                 var fileName = GetFileName(file);
@@ -100,14 +101,14 @@ namespace CorpoGameApp.Controllers
                 var fileRelativePath = Path.Combine(AVATAR_FOLDER_PATH, fileName);
                 player.Avatar = fileRelativePath;
                 _playerServices.UpdatePlayer(player);
-                return RedirectToAction(nameof(Index), new { Message = ManageMessageId.UpdatePlayerSuccess });
+                return RedirectToAction(nameof(Index), new { Message = ManageMessageType.UpdatePlayerSuccess });
             }
             catch(Exception ex)
             {
                 var errorMessage = "Cannot update avatar for player";
                 _logger.LogError(null, ex, errorMessage);
                 ModelState.AddModelError(string.Empty, errorMessage);
-                return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ErrorUpdatingAvatar });
+                return RedirectToAction(nameof(Index), new { Message = ManageMessageType.ErrorUpdatingAvatar });
             }
         }
 
@@ -130,7 +131,7 @@ namespace CorpoGameApp.Controllers
                 player.Surname = model.Surname;
                 player.User.Email = model.Email;
                 _playerServices.UpdatePlayer(player);
-                return RedirectToAction(nameof(Index), new { Message = ManageMessageId.UpdatePlayerSuccess });
+                return RedirectToAction(nameof(Index), new { Message = ManageMessageType.UpdatePlayerSuccess });
             }
             catch(Exception ex)
             {
@@ -158,7 +159,7 @@ namespace CorpoGameApp.Controllers
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _logger.LogInformation(3, "User changed their password successfully.");
-                return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ChangePasswordSuccess });
+                return RedirectToAction(nameof(Index), new { Message = ManageMessageType.ChangePasswordSuccess });
             }
             AddErrors(result);
             return View(model);
@@ -174,32 +175,23 @@ namespace CorpoGameApp.Controllers
             }
         }
 
-        public enum ManageMessageId
+        private string GetStatusMessageText(ManageMessageType? message)
         {
-            UpdatePlayerSuccess,
-            ChangePasswordSuccess,
-            Error,
-            ErrorUpdatingAvatar,
-            FileNotCompatible
-        }
-
-        private string GetStatusMessageText(ManageMessageId? message)
-        {
-            return message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : message == ManageMessageId.UpdatePlayerSuccess ? "Player updated successfully."
-                : message == ManageMessageId.ErrorUpdatingAvatar ? "Avatar update failed."
-                : message == ManageMessageId.FileNotCompatible ? "Not compatible file (file must be max 2MB and in jpg or png format."
+            return message == ManageMessageType.ChangePasswordSuccess ? "Your password has been changed."
+                : message == ManageMessageType.Error ? "An error has occurred."
+                : message == ManageMessageType.UpdatePlayerSuccess ? "Player updated successfully."
+                : message == ManageMessageType.ErrorUpdatingAvatar ? "Avatar update failed."
+                : message == ManageMessageType.FileNotCompatible ? "Not compatible file (file must be max 2MB and in jpg or png format."
                 : string.Empty;
         }
 
-        private bool IsStatusMessageAnError(ManageMessageId? message)
+        private bool IsStatusMessageAnError(ManageMessageType? message)
         {
             switch(message)
             {
-                case ManageMessageId.Error:
-                case ManageMessageId.ErrorUpdatingAvatar:
-                case ManageMessageId.FileNotCompatible:
+                case ManageMessageType.Error:
+                case ManageMessageType.ErrorUpdatingAvatar:
+                case ManageMessageType.FileNotCompatible:
                     return true;
                 default:
                     return false;

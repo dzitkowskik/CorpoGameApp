@@ -1,4 +1,9 @@
 @model GameViewModel
+@{
+    var showStatus = !string.IsNullOrEmpty(ViewData["StatusMessage"]);
+    var statusMessage = ViewData["StatusMessage"];
+    var statusClass = (bool)ViewData["IsStatusError"] ? "text-danger" : "text-success";
+}
 
 <section id="intro" class="intro-section first-section">
     <div class="container">
@@ -10,6 +15,18 @@
         </div>
     </div>
 </section>
+
+@if(showStatus) {
+    <section id="status" class="status-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <p class="@statusClass">@statusMessage</p>
+                </div>
+            </div>
+        </div>
+    </section>
+}
 
 <section id="reservation" class="reservation-section">
     <div class="container">

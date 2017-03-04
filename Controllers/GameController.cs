@@ -13,6 +13,23 @@ using System.Threading.Tasks;
 
 namespace CorpoGameApp.Controllers
 {
+    public class GameMessageType
+    {
+        public static readonly GameMessageType CreateGameGameAlreadyInProgressError 
+            = new GameMessageType("Cannot create new game - game already in progress", false);
+        public static readonly GameMessageType CreateGameSuccess 
+            = new GameMessageType("New game created successfully", true);
+
+        public string Text { get; private set; }
+        public bool Success { get; private set; }
+
+        private GameMessageType(string text, bool success)
+        {
+            Text = text;
+            Success = success;
+        }
+    }
+
     [Authorize]
     public class GameController : BaseController
     {
@@ -36,8 +53,14 @@ namespace CorpoGameApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(GameMessageType message = null)
         {
+            if(message != null)
+            {
+                ViewData["StatusMessage"] = message.Text;
+                ViewData["IsStatusError"] = message.Success;
+            }
+
             var gameViewModel = new GameViewModel() {
                 NewGame = GetNewGameViewModel(),
                 CurrentPlayer = await GetCurrentPlayerViewModel(),
@@ -58,19 +81,23 @@ namespace CorpoGameApp.Controllers
             var newGameViewModel = GetNewGameViewModel();
 
             if(model.SecondTeam.Count != TEAM_SIZE || model.FirstTeam.Count != TEAM_SIZE)
-                newGameViewModel.Error = "Teams must have equal size of 2";
+                ModelState.AddModelError(nameof(model.SecondTeam), $"Teams must have equal size of {TEAM_SIZE}");
 
-            if(ModelState.IsValid && string.IsNullOrEmpty(newGameViewModel.Error))
+            if(ModelState.IsValid)
             {
+                var resultMessage = GameMessageType
                 try
                 {
-                   _gameServices.CreateGame(new [] {model.FirstTeam, model.SecondTeam});
-                    return PartialView("Partial/NewGame", newGameViewModel);
+                    if(_gameServices.CreateGame(new [] {model.FirstTeam, model.SecondTeam}))
+                        
+                    else
+                        throw new Exception("Cannot create a game");
                 }
                 catch(Exception ex)
                 {
                     newGameViewModel.Error = ex.Message;
                 }
+                return RedirectToAction("Index");
             }
 
             return PartialView("Partial/NewGame", newGameViewModel);
@@ -81,11 +108,12 @@ namespace CorpoGameApp.Controllers
         {
             if(ModelState.IsValid)
             {
-               _gameServices.EndGame(model.GameId, model.WinningTeam);
+                if(_gameServices.EndGame(model.GameId, model.WinningTeam))
+                    return RedirectToAction("Index");
+                else
+                    ModelState.AddModelError(string.Empty, "Cannot finish the game");
             }
-            else return PartialView("Partial/CurrentGame", model);
-
-            return RedirectToAction("Index");
+            return PartialView("Partial/CurrentGame", model);
         }
 
         private NewGameViewModel GetNewGameViewModel()

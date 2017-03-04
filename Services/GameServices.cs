@@ -27,7 +27,7 @@ namespace CorpoGameApp.Services
             _playerServices = playerServices;
         }
 
-        public bool CreateGame(IEnumerable<IEnumerable<int>> PlayerTeams)
+        public Game CreateGame(IEnumerable<IEnumerable<int>> PlayerTeams)
         {
             var players = new List<PlayerGames>();
 
@@ -47,8 +47,13 @@ namespace CorpoGameApp.Services
                 Players = players
             };
 
-            _context.Add(game);
-            return _context.SaveChanges() > 0;
+            using(_context.Database.BeginTransaction())
+            {
+                if(_context.Games.Any(t => t.EndTime == null))
+                    throw new GameAlreadyInProgressException();
+                var newGame = _context.Add(game);
+                return _context.SaveChanges() > 0 ? newGame.Entity : null;
+            }
         }
 
         public Game GetCurrentGame()
