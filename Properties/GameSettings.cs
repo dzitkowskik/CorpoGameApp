@@ -2,6 +2,8 @@ namespace CorpoGameApp.Properties
 {
     public class GameSettings
     {
+        public int TeamNumber { get; set; }
+        public int TeamSize { get; set; }
         public int PointsForDraw { get; set; }
         public int PointsForWin { get; set; }
         public int PointsForLose { get; set; }

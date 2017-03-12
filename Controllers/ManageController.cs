@@ -20,8 +20,6 @@ namespace CorpoGameApp.Controllers
     public partial class ManageController : BaseController
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IEmailSender _emailSender;
-        private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _hostingEnvironment;
 
@@ -34,13 +32,9 @@ namespace CorpoGameApp.Controllers
             IPlayerServices playerServices,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender,
-            ISmsSender smsSender,
             ILoggerFactory loggerFactory) : base(userManager, playerServices)
         {
             _signInManager = signInManager;
-            _emailSender = emailSender;
-            _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<ManageController>();
             _hostingEnvironment = hostingEnvironment;
         }

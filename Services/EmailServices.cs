@@ -1,16 +1,13 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using CorpoGameApp.Properties;
 using Microsoft.Extensions.Options;
 using SendGrid;
 
 namespace CorpoGameApp.Services
 {
-    public interface IEmailServices
-    {
-        void SendTestEmail();
-    }
 
     public class EmailServices : IEmailServices
     {
@@ -27,7 +24,7 @@ namespace CorpoGameApp.Services
                 settings.Value.SendGridPassword);
         }
 
-        public async void SendEmail(string subject, string body, IEnumerable<string> recipients)
+        public async Task SendEmail(string subject, string body, IEnumerable<string> recipients)
         {
             SendGridMessage myMessage = new SendGridMessage
             {

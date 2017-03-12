@@ -71,19 +71,21 @@ namespace CorpoGameApp.Services
                 .ThenInclude(x => x.User)
                 .Single(t => t.Id == gameId);
             game.EndTime = DateTime.Now;
-            game.WinnersTeam = wonTeam??DrawReservedTeamNo;
-            
-            foreach(var player in game.Players)
+
+            if(wonTeam.HasValue)
             {
-                if(!wonTeam.HasValue)
-                    player.Player.Score += _options.Value.PointsForDraw;
-                else if(player.Team == wonTeam.Value)
-                    player.Player.Score += _options.Value.PointsForWin;
-                else
-                    player.Player.Score += _options.Value.PointsForLose;
+                game.WinnersTeam = wonTeam.Value;
+                foreach(var player in game.Players)
+                {
+                    if(!wonTeam.HasValue)
+                        player.Player.Score += _options.Value.PointsForDraw;
+                    else if(player.Team == wonTeam.Value)
+                        player.Player.Score += _options.Value.PointsForWin;
+                    else
+                        player.Player.Score += _options.Value.PointsForLose;
+                }
             }
 
-            game.EndTime = DateTime.Now;
             var result = _context.SaveChanges();
             return result > 0;
         }

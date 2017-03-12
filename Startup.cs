@@ -10,6 +10,8 @@ using CorpoGameApp.Models;
 using CorpoGameApp.Services;
 using CorpoGameApp.Properties;
 using System;
+using Hangfire;
+using CorpoGameApp.Logic;
 
 namespace CorpoGameApp
 {
@@ -69,9 +71,8 @@ namespace CorpoGameApp
             services.AddTransient<IGameServices, GameServices>();
             services.AddTransient<IPlayerServices, PlayerServices>();
             services.AddTransient<IStatisticsServices, StatisticsServices>();
-            services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<ISmsSender, AuthMessageSender>();
             services.AddTransient<IEmailServices, EmailServices>();
+            services.AddTransient<IGameLogic, GameLogic>();
             services.AddSingleton<IConfigurationRoot>(Configuration);
         }
 
