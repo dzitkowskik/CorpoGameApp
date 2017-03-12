@@ -48,6 +48,9 @@ namespace CorpoGameApp
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddHangfire(config => 
+                config.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
+
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -60,6 +63,7 @@ namespace CorpoGameApp
 
             // Add Game Settings
             services.Configure<GameSettings>(Configuration.GetSection("GameSettings"));
+            services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
 
             // Add application services.
             services.AddTransient<IGameServices, GameServices>();
@@ -67,6 +71,7 @@ namespace CorpoGameApp
             services.AddTransient<IStatisticsServices, StatisticsServices>();
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddTransient<IEmailServices, EmailServices>();
             services.AddSingleton<IConfigurationRoot>(Configuration);
         }
 
@@ -96,13 +101,15 @@ namespace CorpoGameApp
 
             app.UseIdentity();
 
+            app.UseHangfireServer();
+
             // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Game}/{action=Index}/{id?}");
+                    template: "{controller=Game}/{action=Index}");
             });
 
             try

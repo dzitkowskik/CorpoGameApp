@@ -10,23 +10,59 @@ using Microsoft.Extensions.Options;
 using CorpoGameApp.Properties;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CorpoGameApp.Controllers
 {
-    public class GameMessageType
+    public sealed class GameMessageType
     {
-        public static readonly GameMessageType CreateGameGameAlreadyInProgressError 
-            = new GameMessageType("Cannot create new game - game already in progress", false);
-        public static readonly GameMessageType CreateGameSuccess 
-            = new GameMessageType("New game created successfully", true);
-
-        public string Text { get; private set; }
-        public bool Success { get; private set; }
-
-        private GameMessageType(string text, bool success)
+        public enum Enum
         {
+            CreateGameAlreadyInProgressError,
+            CreateGameUnknownError,
+            CreateGameSuccess,
+            None
+        }
+
+        public static readonly SortedList<Enum, GameMessageType> Values = new SortedList<Enum, GameMessageType>();
+
+        public static readonly GameMessageType None = new GameMessageType(
+            Enum.None,
+            string.Empty,
+            true);
+        public static readonly GameMessageType CreateGameAlreadyInProgressError = new GameMessageType(
+            Enum.CreateGameAlreadyInProgressError,
+            "Cannot create new game - game already in progress", 
+            false);
+        public static readonly GameMessageType CreateGameUnknownError = new GameMessageType(
+            Enum.CreateGameUnknownError,
+            "Cannot create new game - unknown error", 
+            false);
+        public static readonly GameMessageType CreateGameSuccess = new GameMessageType(
+            Enum.CreateGameSuccess,
+            "New game created successfully", 
+            true);
+
+        public readonly Enum Value;
+        public readonly string Text;
+        public readonly bool Success;
+
+        private GameMessageType(Enum value, string text, bool success)
+        {
+            Value = value;
             Text = text;
             Success = success;
+            Values.Add(value, this);
+        }
+
+        public static implicit operator GameMessageType(Enum value)
+        {
+            return Values[value];
+        }
+
+        public static implicit operator Enum(GameMessageType value)
+        {
+            return value.Value;
         }
     }
 
@@ -39,27 +75,30 @@ namespace CorpoGameApp.Controllers
         private readonly IGameServices _gameServices;
         private readonly IOptions<GameSettings> _options;
         private readonly IStatisticsServices _statiticsServices;
+        private readonly ILogger _logger;
+        private readonly IEmailServices _emailServices;
 
         public GameController(
             IGameServices gameServices, 
             IPlayerServices playerServices,
             IStatisticsServices statisticsServices,
             UserManager<ApplicationUser> userManager,
-            IOptions<GameSettings> options) : base(userManager, playerServices)
+            IOptions<GameSettings> options,
+            ILoggerFactory loggerFactory) : base(userManager, playerServices)
         {
             _gameServices = gameServices;
             _statiticsServices = statisticsServices;
             _options = options;
+            _logger = loggerFactory.CreateLogger<GameController>();
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(GameMessageType message = null)
+        public async Task<IActionResult> Index(
+            GameMessageType.Enum messageType = GameMessageType.Enum.None)
         {
-            if(message != null)
-            {
-                ViewData["StatusMessage"] = message.Text;
-                ViewData["IsStatusError"] = message.Success;
-            }
+            var message = (GameMessageType)messageType;
+            ViewData["StatusMessage"] = message.Text;
+            ViewData["IsStatusError"] = !message.Success;
 
             var gameViewModel = new GameViewModel() {
                 NewGame = GetNewGameViewModel(),
@@ -85,19 +124,29 @@ namespace CorpoGameApp.Controllers
 
             if(ModelState.IsValid)
             {
-                var resultMessage = GameMessageType
+                var resultMessage = GameMessageType.CreateGameSuccess;
                 try
                 {
-                    if(_gameServices.CreateGame(new [] {model.FirstTeam, model.SecondTeam}))
-                        
+                    var newGame = _gameServices.CreateGame(new [] {model.FirstTeam, model.SecondTeam});
+                    if(newGame != null)
+                        _logger.LogInformation($"Created new game {newGame.Id}");
                     else
-                        throw new Exception("Cannot create a game");
+                    {
+                        resultMessage = GameMessageType.CreateGameUnknownError;
+                        _logger.LogError("Cannot create a game - reason unknown");
+                    }
+                }
+                catch(GameAlreadyInProgressException)
+                {
+                    resultMessage = GameMessageType.CreateGameAlreadyInProgressError;
+                    _logger.LogWarning("Cannot create game - game already in progress");
                 }
                 catch(Exception ex)
                 {
-                    newGameViewModel.Error = ex.Message;
+                    _logger.LogCritical($"Error occurred while creating new game: {ex.Message} - {ex.StackTrace}");
+                    throw;
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", resultMessage);
             }
 
             return PartialView("Partial/NewGame", newGameViewModel);

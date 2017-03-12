@@ -1,8 +1,8 @@
 @model GameViewModel
 @{
-    var showStatus = !string.IsNullOrEmpty(ViewData["StatusMessage"]);
-    var statusMessage = ViewData["StatusMessage"];
-    var statusClass = (bool)ViewData["IsStatusError"] ? "text-danger" : "text-success";
+    bool showStatus = !string.IsNullOrEmpty(ViewData["StatusMessage"] as string);
+    string statusMessage = (string)ViewData["StatusMessage"];
+    string statusClass = (bool)ViewData["IsStatusError"] ? "text-danger" : "text-success";
 }
 
 <section id="intro" class="intro-section first-section">
