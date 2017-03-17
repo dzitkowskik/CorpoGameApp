@@ -42,9 +42,7 @@ namespace CorpoGameApp.Controllers
         public async Task<IActionResult> Index(
             GameMessageType.Enum messageType = GameMessageType.Enum.None)
         {
-            var message = (GameMessageType)messageType;
-            ViewData["StatusMessage"] = message.Text;
-            ViewData["IsStatusError"] = !message.Success;
+            SetMessage(messageType);
 
             var player = await this.GetCurrentPlayer();
 
@@ -63,7 +61,7 @@ namespace CorpoGameApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateGameViewModel model)
+        public async Task<IActionResult> Create(CreateGameViewModel model)
         {
             var newGameViewModel = _gameLogic.GetNewGameViewModel();
 
@@ -73,22 +71,26 @@ namespace CorpoGameApp.Controllers
             if(ModelState.IsValid)
             {
                 var resultMessage = GameMessageType.CreateGameSuccess;
+                var player = await GetCurrentPlayer();
                 try
                 {
                     var newGame = _gameLogic.CreateGame(new [] {model.FirstTeam, model.SecondTeam});
                     if(newGame != null)
                     {
                         _logger.LogInformation($"Created new game {newGame.Id}");
-                    }
-                    else
-                    {
-                        resultMessage = GameMessageType.CreateGameUnknownError;
+                        var currentGame = _gameLogic.GetCurrentGameViewModel(player);
+                        if(currentGame != null)
+                        {
+                            SetMessage(GameMessageType.CreateGameSuccess);
+                            return View("Partial/CurrentGame", currentGame);
+                        }
+                        SetMessage(GameMessageType.CreateGameUnknownError);
                         _logger.LogError("Cannot create a game - reason unknown");
                     }
                 }
                 catch(GameAlreadyInProgressException)
                 {
-                    resultMessage = GameMessageType.CreateGameAlreadyInProgressError;
+                    SetMessage(GameMessageType.CreateGameAlreadyInProgressError);
                     _logger.LogWarning("Cannot create game - game already in progress");
                 }
                 catch(Exception ex)
@@ -96,10 +98,10 @@ namespace CorpoGameApp.Controllers
                     _logger.LogCritical($"Error occurred while creating new game: {ex.Message} - {ex.StackTrace}");
                     throw;
                 }
-                return RedirectToAction("Index", resultMessage);
+                return View("Partial/NewGame", _gameLogic.GetNewGameViewModel());
             }
 
-            return PartialView("Partial/NewGame", newGameViewModel);
+            return new JsonResult(newGameViewModel);
         }
 
         [HttpPost]
@@ -119,6 +121,13 @@ namespace CorpoGameApp.Controllers
         {
             var currentPlayer = await GetCurrentPlayer();
             return new PlayerViewModel(currentPlayer);
+        }
+
+        private void SetMessage(GameMessageType.Enum messageType)
+        {
+            var message = (GameMessageType)messageType;
+            ViewData["StatusMessage"] = message.Text;
+            ViewData["IsStatusError"] = !message.Success;
         }
     }
 }

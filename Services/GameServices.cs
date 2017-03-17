@@ -47,12 +47,14 @@ namespace CorpoGameApp.Services
                 Players = players
             };
 
-            using(_context.Database.BeginTransaction())
+            using(var transaction = _context.Database.BeginTransaction())
             {
                 if(_context.Games.Any(t => t.EndTime == null))
                     throw new GameAlreadyInProgressException();
                 var newGame = _context.Add(game);
-                return _context.SaveChanges() > 0 ? newGame.Entity : null;
+                var result = _context.SaveChanges() > 0 ? newGame.Entity : null;
+                transaction.Commit();
+                return result;
             }
         }
 

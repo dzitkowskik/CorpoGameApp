@@ -43,7 +43,7 @@ namespace CorpoGameApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection_docker")));
             
             // Identity settings
             services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -51,7 +51,7 @@ namespace CorpoGameApp
                 .AddDefaultTokenProviders();
 
             services.AddHangfire(config => 
-                config.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
+                config.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection_docker")));
 
             services.Configure<IdentityOptions>(options =>
             {

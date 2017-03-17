@@ -13,6 +13,8 @@ using System.IO;
 using System.Net.Http.Headers;
 using System.Linq;
 using CorpoGameApp.Controllers.Enums;
+using System.Collections.Generic;
+using Hangfire;
 
 namespace CorpoGameApp.Controllers
 {
@@ -22,6 +24,7 @@ namespace CorpoGameApp.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IEmailServices _emailServices;
 
         private const string AVATAR_FOLDER_PATH = "images/avatars";
         private const long MAX_AVATAR_FILE_SIZE_IN_BYTES = 2097152; // 2MB
@@ -30,6 +33,7 @@ namespace CorpoGameApp.Controllers
         public ManageController(
             IHostingEnvironment hostingEnvironment,
             IPlayerServices playerServices,
+            IEmailServices emailServices,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILoggerFactory loggerFactory) : base(userManager, playerServices)
@@ -37,6 +41,7 @@ namespace CorpoGameApp.Controllers
             _signInManager = signInManager;
             _logger = loggerFactory.CreateLogger<ManageController>();
             _hostingEnvironment = hostingEnvironment;
+            _emailServices = emailServices;
         }
 
         [HttpGet]
@@ -152,6 +157,13 @@ namespace CorpoGameApp.Controllers
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);
+
+                BackgroundJob.Enqueue<IEmailServices>(es =>
+                    es.SendEmail(
+                        "CorpoGameApp - password changed", 
+                        "Your password has changed", 
+                        new List<string> { user.Email }));
+                        
                 _logger.LogInformation(3, "User changed their password successfully.");
                 return RedirectToAction(nameof(Index), new { Message = ManageMessageType.ChangePasswordSuccess });
             }

@@ -61,8 +61,8 @@ namespace CorpoGameApp.Logic
         public Game CreateGame(IEnumerable<IEnumerable<int>> teams)
         {
             var result = _gameServices.CreateGame(teams);
-            BackgroundJob.Schedule(
-                () => EndGame(result.Id, null),
+            BackgroundJob.Schedule<IGameLogic>(
+                logic => logic.EndGame(result.Id, null),
                 TimeSpan.FromMinutes(_options.Value.GameDuration));
             return result;
         }
