@@ -79,11 +79,11 @@ namespace CorpoGameApp.Controllers
                     if(newGame != null)
                     {
                         _logger.LogInformation($"Created new game {newGame.Id}");
-                        var currentGame = _gameLogic.GetCurrentGameViewModel(player);
-                        if(currentGame != null)
+                        var finishGame = _gameLogic.GetFinishGameViewModel(player);
+                        if(finishGame != null)
                         {
                             SetMessage(GameMessageType.CreateGameSuccess);
-                            return View("Partial/CurrentGame", currentGame);
+                            return View("Partial/FinishGame", finishGame);
                         }
                         SetMessage(GameMessageType.CreateGameUnknownError);
                         _logger.LogError("Cannot create a game - reason unknown");

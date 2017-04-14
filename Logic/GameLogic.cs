@@ -115,7 +115,5 @@ namespace CorpoGameApp.Logic
             var result = _gameServices.EndGame(gameId, winningTeam);
             return result;
         }
-
-
     }
 }
