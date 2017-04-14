@@ -6,7 +6,7 @@ namespace CorpoGameApp.ViewModels.Game
     {
         public Queue<PlayerViewModel> CurrentlyPlayingPlayers { get; set; }
         public Queue<PlayerViewModel> QueuedPlayers { get; set; }
-        public int CurrentGameTimeLeft { get; set; }
-        public int EstimatedGameTimeLeft { get; set; }
+        public GameTimeLeftViewModel CurrentGameTimeLeft { get; set; }
+        public GameTimeLeftViewModel EstimatedGameTimeLeft { get; set; }
     }
 }
