@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace CorpoGameApp.ViewModels.Game
 {
-    public class SearchTeamViewModel
+    public class SearchGameViewModel
     {
         public Queue<PlayerViewModel> CurrentlyPlayingPlayers { get; set; }
         public Queue<PlayerViewModel> QueuedPlayers { get; set; }
