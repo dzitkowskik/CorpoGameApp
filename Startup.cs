@@ -57,7 +57,8 @@ namespace CorpoGameApp
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 4;
-                options.Password.RequireNonAlphanumeric = false;                
+                options.Password.RequireNonAlphanumeric = false;          
+                options.SignIn.RequireConfirmedEmail = true;      
             });
 
             // MVC
@@ -116,10 +117,11 @@ namespace CorpoGameApp
             try
             {
                 DbInitialization.Initialize(context);
+                DbInitialization.Seed(context);
             }
             catch(Exception ex)
             {
-                logger.LogError("Error {0} occured", ex.Message);
+                logger.LogError("Error during db initialization -> {0} occured", ex.Message);
             }
         }
     }

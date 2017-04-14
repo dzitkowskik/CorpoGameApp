@@ -1,0 +1,49 @@
+@model IEnumerable<StatisticsViewModel>
+
+@{
+    var statisticsList = Model.ToList();
+}
+
+<div id="myCarousel" class="carousel slide">
+    <div class="carousel-inner" role="listbox">
+        @foreach(var stat in statisticsList) {
+            <div class="item @(stat==Model.Statistics.First() ? "active" : "")">
+                <div class="intro-content text-center">
+                    <h1>@stat.Name</h1>
+                    <p>@stat.Description</p>
+                    <table class="table table-bordered table-striped table-hover table-curved">
+                        <thead>
+                            <tr>
+                                @foreach(var header in stat.Headers) {
+                                    <th class="text-center">@header</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var row in stat.Values) {
+                                <tr>
+                                    @foreach(var col in row) {
+                                        <td>@col</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        <!-- Controls -->
+        <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+            <span class="icon-prev"></span>
+        </a>
+        <a class="right carousel-control" href="#myCarousel" data-slide="next">
+            <span class="icon-next"></span>
+        </a>  
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+            @for(var i = 0; i < Model.Statistics.Count(); i++) {
+                <li data-target="#myCarousel" data-slide-to="@i" @(i==0 ? "class=active" : "")></li>
+            }
+        </ol>
+    </div>
+</div>

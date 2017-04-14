@@ -10,6 +10,8 @@ namespace CorpoGameApp.Data
         public DbSet<Game> Games { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<PlayerGames> PlayerGames { get; set; }
+        public DbSet<PlayerQueueItem> PlayerQueueItems { get; set; }
+        public DbSet<QueueItemState> QueueItemStates { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -38,6 +40,11 @@ namespace CorpoGameApp.Data
                 t.HasOne(p => p.User)
                     .WithOne()
                     .HasForeignKey<Player>(x => x.UserForeignKey);
+            });
+
+            modelBuilder.Entity<QueueItemState>(t =>
+            {
+                t.ToTable("QueueItemState");
             });
 
             modelBuilder.Entity<PlayerGames>(t => {
