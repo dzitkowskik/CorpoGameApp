@@ -4,8 +4,9 @@ namespace CorpoGameApp.ViewModels.Game
 {
     public class SearchTeamViewModel
     {
-        public int TeamCount { get; set; }
-        public Queue<TeamViewModel> TeamQueue { get; set; }
-        public int? SelectedTeamId { get; set; }
+        public Queue<PlayerViewModel> CurrentlyPlayingPlayers { get; set; }
+        public Queue<PlayerViewModel> QueuedPlayers { get; set; }
+        public int CurrentGameTimeLeft { get; set; }
+        public int EstimatedGameTimeLeft { get; set; }
     }
 }

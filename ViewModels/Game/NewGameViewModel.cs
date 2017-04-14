@@ -11,6 +11,7 @@ namespace CorpoGameApp.ViewModels.Game
         public int TeamCapacity { get; set; }
         public int NumberOfTeams { get; set; }
 
+        public string Label { get; set; }
         public string Error { get; set; }
 
         public NewGameViewModel(IEnumerable<Player> players, int numberOfTeams, int teamCapacity)

@@ -1,6 +1,6 @@
 @model NewGameViewModel
 
-<h1>Create new game</h1>
+<h1>@Model.Label</h1>
 
 @if(!string.IsNullOrEmpty(Model.Error)) {
     <div class="row has-error alert alert-danger">

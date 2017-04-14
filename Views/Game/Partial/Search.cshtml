@@ -1,45 +1,42 @@
 @model SearchTeamViewModel
 
 
-<form class="form-inline">
-    <div class="form-group">
-        <label asp-for="TeamName" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="TeamName" class="form-control" />
-            <span asp-validation-for="TeamName" class="text-danger"></span>
+<div id="TeamQueueListDiv" class="col-md-12">
+
+    <div id="CurrentlyPlayingPlayersListDiv" class="row">
+        <span>Currently playing:</span>
+        <button class="btn btn-primary pull-right">Join game queue</button>
+        <hr>
+        <div class="col-md-6">
+            <ol class="list-group">
+                @foreach(var player in Model.CurrentlyPlayingPlayers) {
+                    <li class="list-group-item">@player.Name (score: @player.Score)</li>
+                }
+            </ol>
+        <div class="col-md-6">
+            <p>Game time left:</p>
+            <p>@CurrentGameTimeLeft</p>
         </div>
     </div>
-    <button id="CreateTeamButton" class="btn">Create team</button>
-</form>
 
-<div id="TeamQueueListDiv">
-    <table id="TeamQueueListTable" class="table">
-        <thead>
-            <tr>    
-                @for(int teamNo = 1; teamNo <= Model.TeamsCount; teamNo++) {
-                    <th>@teamNo</th>
+    <div id="QueuedPlayersListDiv" class="row">
+        <span>Players queued:</span>
+        <hr>
+        <div class="col-md-6">
+            <ol class="list-group">
+                @foreach(var player in Model.QueuedPlayers) {
+                    if(player.IsCurrent) {
+                        <li class="list-group-item">@player.Name (score: @player.Score)</li>
+                    } else {
+                        <li class="list-group-item list-group-item-info">player.Name (score: @player.Score)</li>
+                    }
                 }
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(var team in Model.TeamQueue) {
-                <tr>
-                    @for(int playerIndex = 0; playerIndex < Model.TeamsCount; playerIndex++) {
-                        if(playerIndex < team.Size) {
-                            <td>@team.Players[playerIndex]</td>
-                        } else {
-                            <td></td>
-                        }
-                    }
-                    if(Model.SelectedTeamId.Value == team.Id) {
-                        <button class="btn btn-danger" id="LeaveTeamButton">Leave</button>
-                    }
-                    if(!Model.SelectedTeamId.HasValue) {
-                        <button class="btn btn-primary" id="JoinTeamButton">Join</button>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
+            </ol>
+        </div>
+        <div class="col-md-6">
+            <p>Estimated wait time:</p>
+            <p>@EstimatedGameTimeLeft</p>
+        </div>
+    </div>
+    
 </div>
