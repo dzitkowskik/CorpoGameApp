@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using CorpoGameApp.Enums;
 using CorpoGameApp.Models;
 
-namespace CorpoGameApp.Services.Interfaces
+namespace CorpoGameApp.Services
 {
     public interface IPlayerQueueService
     {

@@ -15,15 +15,18 @@ namespace CorpoGameApp.Logic
         private readonly IGameServices _gameServices;
         private readonly IPlayerServices _playerServices;
         private readonly IOptions<GameSettings> _options;
+        private readonly IPlayerQueueService _playerQueueService;
 
         public GameLogic(
             IGameServices gameServices,
+            IPlayerQueueService playerQueueService,
             IPlayerServices playerServices,
             IOptions<GameSettings> options)
         {
             this._playerServices = playerServices;
             this._gameServices = gameServices;
             this._options = options;
+            this._playerQueueService = playerQueueService;
         }
 
         public NewGameViewModel GetNewGameViewModel()
@@ -53,31 +56,31 @@ namespace CorpoGameApp.Logic
                     SecondsLeft = (int)timeLeft.TotalSeconds
                 };
 
-                result.QueuedPlayers = currentGame.Players.Select(t => new PlayerViewModel(t));
+                result.CurrentlyPlayingPlayers = currentGame.Players
+                    .Select(t => new PlayerViewModel(t.Player))
+                    .ToList();
             }
 
             // Get queued players
-            
+            var queuedPlayers = _playerQueueService.GetQueuedPlayers();
+
+            if(queuedPlayers != null)
+            {
+                result.QueuedPlayers = queuedPlayers
+                    .Select(t => new PlayerViewModel(t.Player))
+                    .ToList();
+
+                result.EstimatedGameTimeLeft = new GameTimeLeftViewModel()
+                {
+                    Label = "Estimated waiting time left",
+                    SecondsLeft = 100
+                };
+            }
 
             return result;
         }
 
-        public Game CreateGame(IEnumerable<IEnumerable<int>> teams)
-        {
-            var result = _gameServices.CreateGame(teams);
-            BackgroundJob.Schedule<IGameLogic>(
-                logic => logic.EndGame(result.Id, null),
-                TimeSpan.FromMinutes(_options.Value.GameDuration));
-            return result;
-        }
-
-        public bool EndGame(int gameId, int? winningTeam)
-        {
-            var result = _gameServices.EndGame(gameId, winningTeam);
-            return result;
-        }
-
-        private FinishGameViewModel GetFinishGameViewModel(Player player)
+        public FinishGameViewModel GetFinishGameViewModel(Player player)
         {
             // User has a game without winner
 
@@ -97,5 +100,22 @@ namespace CorpoGameApp.Logic
             }
             return null;
         }
+
+        public Game CreateGame(IEnumerable<IEnumerable<int>> teams)
+        {
+            var result = _gameServices.CreateGame(teams);
+            BackgroundJob.Schedule<IGameLogic>(
+                logic => logic.EndGame(result.Id, null),
+                TimeSpan.FromMinutes(_options.Value.GameDuration));
+            return result;
+        }
+
+        public bool EndGame(int gameId, int? winningTeam)
+        {
+            var result = _gameServices.EndGame(gameId, winningTeam);
+            return result;
+        }
+
+
     }
 }

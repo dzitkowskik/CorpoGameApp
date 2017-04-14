@@ -3,7 +3,6 @@ using System.Linq;
 using CorpoGameApp.Data;
 using CorpoGameApp.Enums;
 using CorpoGameApp.Models;
-using CorpoGameApp.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CorpoGameApp.Services

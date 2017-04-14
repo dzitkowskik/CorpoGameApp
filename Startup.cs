@@ -70,6 +70,7 @@ namespace CorpoGameApp
 
             // Add application services.
             services.AddTransient<IGameServices, GameServices>();
+            services.AddTransient<IPlayerQueueService, PlayerQueueService>();
             services.AddTransient<IPlayerServices, PlayerServices>();
             services.AddTransient<IStatisticsServices, StatisticsServices>();
             services.AddTransient<IEmailServices, EmailServices>();
