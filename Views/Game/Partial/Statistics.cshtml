@@ -7,7 +7,7 @@
 <div id="myCarousel" class="carousel slide">
     <div class="carousel-inner" role="listbox">
         @foreach(var stat in statisticsList) {
-            <div class="item @(stat==Model.Statistics.First() ? "active" : "")">
+            <div class="item @(stat==Model.First() ? "active" : "")">
                 <div class="intro-content text-center">
                     <h1>@stat.Name</h1>
                     <p>@stat.Description</p>
@@ -41,7 +41,7 @@
         </a>  
         <!-- Indicators -->
         <ol class="carousel-indicators">
-            @for(var i = 0; i < Model.Statistics.Count(); i++) {
+            @for(var i = 0; i < Model.Count(); i++) {
                 <li data-target="#myCarousel" data-slide-to="@i" @(i==0 ? "class=active" : "")></li>
             }
         </ol>
