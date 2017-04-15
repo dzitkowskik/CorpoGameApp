@@ -61,6 +61,11 @@ namespace CorpoGameApp
                 options.SignIn.RequireConfirmedEmail = true;      
             });
 
+            services.AddSignalR(options => 
+            {
+                options.Hubs.EnableDetailedErrors = true;
+            });
+
             // MVC
             services.AddMvc();
 
@@ -101,10 +106,10 @@ namespace CorpoGameApp
             }
 
             app.UseStaticFiles();
-
             app.UseIdentity();
-
             app.UseHangfireServer();
+            app.UseWebSockets();
+            app.UseSignalR();
 
             // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 

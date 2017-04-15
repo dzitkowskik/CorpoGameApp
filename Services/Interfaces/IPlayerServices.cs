@@ -13,5 +13,6 @@ namespace CorpoGameApp.Services
         void CreatePlayer(Player player);
         void UpdatePlayer(Player player);
         IQueryable<Player> GetTopPlayers(int noOfTopPlayers);
+        Player GetPlayerById(int playerId);
     }
 }

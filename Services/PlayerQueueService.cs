@@ -25,11 +25,11 @@ namespace CorpoGameApp.Services
                 .ToList();
         }
 
-        public int QueuePlayer(Player player)
+        public int QueuePlayer(int playerId)
         {
             var item = new PlayerQueueItem()
             {
-                Player = player,
+                Player = new Player(){ Id = playerId },
                 State = new QueueItemState() { Id = (int)QueuedItemStateEnum.Queued }
             };
 

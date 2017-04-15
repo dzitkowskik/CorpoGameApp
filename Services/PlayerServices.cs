@@ -23,9 +23,14 @@ namespace CorpoGameApp.Services
             _options = options;
         }
 
+        public Player GetPlayerById(int playerId)
+        {
+            return _context.Players.First(t => t.Id == playerId);
+        }
+
         public int GetPlayerScore(int playerId)
         {
-            return _context.Players.First(t => t.Id == playerId).Score;
+            return GetPlayerById(playerId).Score;
         }
 
         public IEnumerable<Player> GetAllPlayers()

@@ -5,7 +5,8 @@
 
     <div id="CurrentlyPlayingPlayersListDiv" class="row">
         <span>Currently playing:</span>
-        <button class="btn btn-primary pull-right">Join game queue</button>
+        <input id="SeachGameCurrentPlayerId" asp-for="CurrentPlayerId" type="hidden"/>
+        <button id="SearchGameJoinGameQueue" class="btn btn-primary pull-right">Join game queue</button>
         <hr>
         @if(Model.CurrentlyPlayingPlayers != null) {
             <div class="col-md-6">
@@ -44,3 +45,7 @@
         }
     </div>
 </div>
+
+<script src="http://ajax.aspnetcdn.com/ajax/signalr/jquery.signalr-2.2.1.min.js"></script>
+<script src="signalr/hubs"></script>
+<script src="~/js/gameQueue.js"></script>
