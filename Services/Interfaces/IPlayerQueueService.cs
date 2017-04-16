@@ -7,7 +7,7 @@ namespace CorpoGameApp.Services
     public interface IPlayerQueueService
     {
         IList<PlayerQueueItem> GetQueuedPlayers();
-        int QueuePlayer(int playerId);
+        int QueuePlayer(Player player);
         int UpdateQueuedPlayerState(Player player, QueuedItemStateEnum newState);
     }
 }

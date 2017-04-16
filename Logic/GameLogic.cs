@@ -42,6 +42,7 @@ namespace CorpoGameApp.Logic
         public SearchGameViewModel GetSearchGameViewModel(Player player)
         {
             var result = new SearchGameViewModel();
+            result.CurrentPlayerId = player.Id;
 
             // Check if a not ended game exists
             var currentGame = _gameServices.GetCurrentGame();

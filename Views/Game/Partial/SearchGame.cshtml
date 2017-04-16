@@ -31,9 +31,9 @@
                 <ol class="list-group">
                     @foreach(var player in Model.QueuedPlayers) {
                         if(player.IsCurrent) {
-                            <li class="list-group-item">@player.Name (score: @player.Score)</li>
+                            <li class="list-group-item">@player.Name @player.Surname (score: @player.Score)</li>
                         } else {
-                            <li class="list-group-item list-group-item-info">player.Name (score: @player.Score)</li>
+                            <li class="list-group-item list-group-item-info">@player.Name @player.Surname (score: @player.Score)</li>
                         }
                     }
                 </ol>

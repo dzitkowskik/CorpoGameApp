@@ -10,9 +10,13 @@ namespace CorpoGameApp.Services
     public class PlayerQueueService : IPlayerQueueService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IPlayerServices _playerServices;
 
-        public PlayerQueueService(ApplicationDbContext context)
+        public PlayerQueueService(
+            ApplicationDbContext context,
+            IPlayerServices playerServices)
         {
+            this._playerServices = playerServices;
             _context = context;
         }
 
@@ -31,11 +35,11 @@ namespace CorpoGameApp.Services
                 .ToList();
         }
 
-        public int QueuePlayer(int playerId)
+        public int QueuePlayer(Player player)
         {
             var item = new PlayerQueueItem()
             {
-                Player = _context.Players.First(t => t.Id == playerId),
+                Player = player,
                 State = GetState(QueuedItemStateEnum.Queued)
             };
 

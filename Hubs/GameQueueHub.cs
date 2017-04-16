@@ -1,4 +1,5 @@
 using CorpoGameApp.Services;
+using CorpoGameApp.ViewModels.Game;
 using Microsoft.AspNetCore.SignalR;
 
 namespace CorpoGameApp.Hubs
@@ -18,11 +19,11 @@ namespace CorpoGameApp.Hubs
 
         public void JoinQueue(int playerId)
         {
-            _playerQueueService.QueuePlayer(playerId);
-            
             var player = _playerServices.GetPlayerById(playerId);
 
-            Clients.All.playerJoined(player);
+            _playerQueueService.QueuePlayer(player);
+
+            Clients.All.playerJoined(new PlayerViewModel(player));
         }
 
     }
