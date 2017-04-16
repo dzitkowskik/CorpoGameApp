@@ -18,10 +18,16 @@ namespace CorpoGameApp.Services
 
         public IList<PlayerQueueItem> GetQueuedPlayers()
         {
-            return _context.PlayerQueueItems
+            var queuedEnumId = (int)QueuedItemStateEnum.Queued;
+
+            var queueItems = _context.PlayerQueueItems
                 .Include(t => t.Player)
+                .Include(t => t.Player.User)
                 .Include(t => t.State)
-                .Where(t => t.State.Id == (int)QueuedItemStateEnum.Queued)
+                .ToList();
+
+            return queueItems
+                .Where(t => t.State.Id == queuedEnumId)
                 .ToList();
         }
 
@@ -29,8 +35,8 @@ namespace CorpoGameApp.Services
         {
             var item = new PlayerQueueItem()
             {
-                Player = new Player(){ Id = playerId },
-                State = new QueueItemState() { Id = (int)QueuedItemStateEnum.Queued }
+                Player = _context.Players.First(t => t.Id == playerId),
+                State = GetState(QueuedItemStateEnum.Queued)
             };
 
             _context.PlayerQueueItems.Add(item);
@@ -43,10 +49,15 @@ namespace CorpoGameApp.Services
                 .Include(t => t.Player)
                 .FirstOrDefault(t => t.Player.Id == player.Id);
 
-            item.State = new QueueItemState() { Id = (int)newState };
+            item.State = GetState(newState);
 
             _context.PlayerQueueItems.Update(item);
             return _context.SaveChanges();
+        }
+
+        public QueueItemState GetState(QueuedItemStateEnum stateEnum)
+        {
+            return _context.QueueItemStates.First(t => t.Id == (int)stateEnum);
         }
     }
 }

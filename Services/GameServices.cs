@@ -58,19 +58,23 @@ namespace CorpoGameApp.Services
             }
         }
 
-        public Game GetCurrentGame()
+        public IQueryable<Game> GetAllGames()
         {
             return _context.Games
-                .Include(x => x.Players)
+                .Include(g => g.Players)
+                .ThenInclude(p => p.Player)
+                .ThenInclude(x => x.User);
+        }
+
+        public Game GetCurrentGame()
+        {
+            return GetAllGames()
                 .FirstOrDefault(t => t.EndTime == null);
         }
 
         public bool EndGame(int gameId, int? wonTeam)
         {
-            var game = _context.Games
-                .Include(g => g.Players)
-                .ThenInclude(p => p.Player)
-                .ThenInclude(x => x.User)
+            var game = GetAllGames()
                 .Single(t => t.Id == gameId);
             game.EndTime = DateTime.Now;
 
@@ -94,10 +98,7 @@ namespace CorpoGameApp.Services
 
         public Game GetPlayerLastGame(int playerId)
         {
-            var lastGame = _context.Games
-                .Include(x => x.Players)
-                .ThenInclude(t => t.Player)
-                .ThenInclude(t => t.User)
+            var lastGame = GetAllGames()
                 .Where(t => t.Players.Any(p => p.PlayerId == playerId))
                 .OrderByDescending(t => t.StartTime)
                 .FirstOrDefault();
@@ -106,12 +107,10 @@ namespace CorpoGameApp.Services
 
         public IQueryable<Game> GetLastNGames(int lastGamesCount)
         {
-            return _context.Games
+            return GetAllGames()
                 .Where(t => t.EndTime != null)
                 .OrderByDescending(t => t.EndTime)
-                .Take(lastGamesCount)
-                .Include(t => t.Players)
-                .ThenInclude(t => t.Player);
+                .Take(lastGamesCount);
         }
     }
 }

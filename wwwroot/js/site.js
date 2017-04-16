@@ -42,7 +42,7 @@ function refreshPlayerLists() {
     if(picker.length > 0) {
         selectedPlayers('#firstTeamSelect', '#secondTeamSelect');
         selectedPlayers('#secondTeamSelect', '#firstTeamSelect');
-        picker.selectpicker('refresh');
+        // picker.selectpicker('refresh');
     }
 }
 
