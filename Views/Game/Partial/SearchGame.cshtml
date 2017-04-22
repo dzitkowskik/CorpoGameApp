@@ -1,5 +1,13 @@
 @model SearchGameViewModel
 
+@{
+    if(Model.CurrentlyPlayingPlayers == null) {
+        Model.CurrentlyPlayingPlayers = new List<PlayerViewModel>();
+    }
+    if(Model.QueuedPlayers == null) {
+        Model.QueuedPlayers = new List<PlayerViewModel>();
+    }
+}
 
 <div id="TeamQueueListDiv" class="col-md-12">
 
@@ -8,40 +16,36 @@
         <input id="SeachGameCurrentPlayerId" asp-for="CurrentPlayerId" type="hidden"/>
         <button id="SearchGameJoinGameQueue" class="btn btn-primary pull-right">Join game queue</button>
         <hr>
-        @if(Model.CurrentlyPlayingPlayers != null) {
-            <div class="col-md-6">
-                <ol class="list-group">
-                    @foreach(var player in Model.CurrentlyPlayingPlayers) {
-                        <li class="list-group-item">@player.Name (score: @player.Score)</li>
-                    }
-                </ol>
-            </div>
-            <div class="col-md-6">
-                <p>Game time left:</p>
-                <p>@Model.CurrentGameTimeLeft.SecondsLeft</p>
-            </div>
-        }
+        <div class="col-md-6">
+            <ol class="list-group" id="currentPlayersList">
+                @foreach(var player in Model.CurrentlyPlayingPlayers) {
+                    <li class="list-group-item">@player.Name (score: @player.Score)</li>
+                }
+            </ol>
+        </div>
+        <div class="col-md-6">
+            <label>@Model?.CurrentGameTimeLeft?.Label</label>
+            <p id="currentGameTimeLeft">@Model?.CurrentGameTimeLeft?.SecondsLeft</p>
+        </div>
     </div>
 
     <div id="QueuedPlayersListDiv" class="row">
         <span>Players queued:</span>
         <hr>
-        @if(Model.QueuedPlayers != null) {
-            <div class="col-md-6">
-                <ol class="list-group">
-                    @foreach(var player in Model.QueuedPlayers) {
-                        if(player.IsCurrent) {
-                            <li class="list-group-item">@player.Name @player.Surname (score: @player.Score)</li>
-                        } else {
-                            <li class="list-group-item list-group-item-info">@player.Name @player.Surname (score: @player.Score)</li>
-                        }
+        <div class="col-md-6">
+            <ol class="list-group" id="queuedPlayersList">
+                @foreach(var player in Model.QueuedPlayers) {
+                    if(player.IsCurrent) {
+                        <li class="list-group-item">@player.Name @player.Surname (score: @player.Score)</li>
+                    } else {
+                        <li class="list-group-item list-group-item-info">@player.Name @player.Surname (score: @player.Score)</li>
                     }
-                </ol>
-            </div>
-            <div class="col-md-6">
-                <p>Estimated wait time:</p>
-                <p>@Model.EstimatedGameTimeLeft.SecondsLeft</p>
-            </div>
-        }
+                }
+            </ol>
+        </div>
+        <div class="col-md-6">
+            <label>@Model?.EstimatedGameTimeLeft?.Label</label>
+            <p id="estimatedGameTimeLeft">@Model?.EstimatedGameTimeLeft?.SecondsLeft</p>
+        </div>
     </div>
 </div>
