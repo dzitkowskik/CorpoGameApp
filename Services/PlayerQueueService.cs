@@ -42,9 +42,15 @@ namespace CorpoGameApp.Services
                 Player = player,
                 State = GetState(QueuedItemStateEnum.Queued)
             };
-
-            _context.PlayerQueueItems.Add(item);
-            return _context.SaveChanges();
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+                if(_context.PlayerQueueItems.Any(t => t.Id == item.Player.Id))
+                    throw new PlayerAlreadyQeueuedException();
+                _context.PlayerQueueItems.Add(item);
+                var result = _context.SaveChanges();
+                transaction.Commit();
+                return result;
+            }
         }
 
         public int UpdateQueuedPlayerState(Player player, QueuedItemStateEnum newState)
