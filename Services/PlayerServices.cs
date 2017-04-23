@@ -23,14 +23,19 @@ namespace CorpoGameApp.Services
             _options = options;
         }
 
-        public int GetPlayerScore(int playerId)
+        public Player GetPlayerById(int playerId)
         {
-            return _context.Players.First(t => t.Id == playerId).Score;
+            return GetAllPlayers().First(t => t.Id == playerId);
         }
 
-        public IEnumerable<Player> GetAllPlayers()
+        public int GetPlayerScore(int playerId)
         {
-            return _context.Players.Include(t => t.User).AsEnumerable();
+            return GetPlayerById(playerId).Score;
+        }
+
+        public IQueryable<Player> GetAllPlayers()
+        {
+            return _context.Players.Include(t => t.User);
         }
 
         public bool PlayerExists(string userId)
@@ -51,7 +56,7 @@ namespace CorpoGameApp.Services
 
         public void UpdatePlayer(Player player)
         {
-            var dbPlayer = _context.Players.First(t => t.User.Id == player.User.Id);
+            var dbPlayer = GetAllPlayers().First(t => t.User.Id == player.User.Id);
             dbPlayer.Name = player.Name;
             dbPlayer.Surname = player.Surname;
             _context.Update(dbPlayer);
@@ -60,7 +65,7 @@ namespace CorpoGameApp.Services
 
         public IQueryable<Player> GetTopPlayers(int noOfTopPlayers)
         {
-            return _context.Players
+            return GetAllPlayers()
                 .Include(player => player.Games)
                     .ThenInclude(game => game.Game)
                 .OrderByDescending(t => t.Score)

@@ -57,7 +57,13 @@ namespace CorpoGameApp
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 4;
-                options.Password.RequireNonAlphanumeric = false;                
+                options.Password.RequireNonAlphanumeric = false;          
+                options.SignIn.RequireConfirmedEmail = true;      
+            });
+
+            services.AddSignalR(options => 
+            {
+                options.Hubs.EnableDetailedErrors = true;
             });
 
             // MVC
@@ -69,6 +75,7 @@ namespace CorpoGameApp
 
             // Add application services.
             services.AddTransient<IGameServices, GameServices>();
+            services.AddTransient<IPlayerQueueService, PlayerQueueService>();
             services.AddTransient<IPlayerServices, PlayerServices>();
             services.AddTransient<IStatisticsServices, StatisticsServices>();
             services.AddTransient<IEmailServices, EmailServices>();
@@ -99,10 +106,10 @@ namespace CorpoGameApp
             }
 
             app.UseStaticFiles();
-
             app.UseIdentity();
-
             app.UseHangfireServer();
+            app.UseWebSockets();
+            app.UseSignalR();
 
             // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 
@@ -116,10 +123,11 @@ namespace CorpoGameApp
             try
             {
                 DbInitialization.Initialize(context);
+                DbInitialization.Seed(context);
             }
             catch(Exception ex)
             {
-                logger.LogError("Error {0} occured", ex.Message);
+                logger.LogError("Error during db initialization -> {0} occured", ex.Message);
             }
         }
     }

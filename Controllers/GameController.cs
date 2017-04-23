@@ -48,8 +48,9 @@ namespace CorpoGameApp.Controllers
 
             var gameViewModel = new GameViewModel() {
                 NewGame = _gameLogic.GetNewGameViewModel(),
-                CurrentPlayer = await GetCurrentPlayerViewModel(),
-                CurrentGame = _gameLogic.GetCurrentGameViewModel(player),
+                CurrentPlayer = new PlayerViewModel(player),
+                FinishGame = _gameLogic.GetFinishGameViewModel(player),
+                SearchGame = _gameLogic.GetSearchGameViewModel(player),
                 Statistics = new List<StatisticsViewModel>()
                 {
                     _statiticsServices.GetTopPlayersStatistic(),
@@ -78,11 +79,11 @@ namespace CorpoGameApp.Controllers
                     if(newGame != null)
                     {
                         _logger.LogInformation($"Created new game {newGame.Id}");
-                        var currentGame = _gameLogic.GetCurrentGameViewModel(player);
-                        if(currentGame != null)
+                        var finishGame = _gameLogic.GetFinishGameViewModel(player);
+                        if(finishGame != null)
                         {
                             SetMessage(GameMessageType.CreateGameSuccess);
-                            return View("Partial/CurrentGame", currentGame);
+                            return View("Partial/FinishGame", finishGame);
                         }
                         SetMessage(GameMessageType.CreateGameUnknownError);
                         _logger.LogError("Cannot create a game - reason unknown");
@@ -105,7 +106,7 @@ namespace CorpoGameApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Finish(CurrentGameViewModel model)
+        public IActionResult Finish(FinishGameViewModel model)
         {
             if(ModelState.IsValid)
             {
@@ -115,12 +116,6 @@ namespace CorpoGameApp.Controllers
                     ModelState.AddModelError(string.Empty, "Cannot finish the game");
             }
             return PartialView("Partial/CurrentGame", model);
-        }
-
-        private async Task<PlayerViewModel> GetCurrentPlayerViewModel()
-        {
-            var currentPlayer = await GetCurrentPlayer();
-            return new PlayerViewModel(currentPlayer);
         }
 
         private void SetMessage(GameMessageType.Enum messageType)

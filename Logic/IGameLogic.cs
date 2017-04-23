@@ -7,7 +7,8 @@ namespace CorpoGameApp.Logic
     public interface IGameLogic
     {
         NewGameViewModel GetNewGameViewModel();
-        CurrentGameViewModel GetCurrentGameViewModel(Player player);
+        FinishGameViewModel GetFinishGameViewModel(Player player);
+        SearchGameViewModel GetSearchGameViewModel(Player player);
         Game CreateGame(IEnumerable<IEnumerable<int>> teams);
         bool EndGame(int gameId, int? winningTeam);
     }

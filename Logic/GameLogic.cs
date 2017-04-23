@@ -15,15 +15,18 @@ namespace CorpoGameApp.Logic
         private readonly IGameServices _gameServices;
         private readonly IPlayerServices _playerServices;
         private readonly IOptions<GameSettings> _options;
+        private readonly IPlayerQueueService _playerQueueService;
 
         public GameLogic(
             IGameServices gameServices,
+            IPlayerQueueService playerQueueService,
             IPlayerServices playerServices,
             IOptions<GameSettings> options)
         {
             this._playerServices = playerServices;
             this._gameServices = gameServices;
             this._options = options;
+            this._playerQueueService = playerQueueService;
         }
 
         public NewGameViewModel GetNewGameViewModel()
@@ -36,26 +39,67 @@ namespace CorpoGameApp.Logic
             return newGameViewModel;
         }
 
-        public CurrentGameViewModel GetCurrentGameViewModel(Player player)
+        public SearchGameViewModel GetSearchGameViewModel(Player player)
         {
-            // First situation: User has a game without winner
-            var gameWithoutOutcome = GetLastGameWithoutOutcome(player);
-            if(gameWithoutOutcome != null) return gameWithoutOutcome;
+            var result = new SearchGameViewModel();
+            result.CurrentPlayerId = player.Id;
 
             // Check if a not ended game exists
             var currentGame = _gameServices.GetCurrentGame();
-            if(currentGame == null) return null;
-
-            var endTime = currentGame.StartTime.AddMinutes(_options.Value.GameDuration);
-            var timeLeft = endTime - DateTime.Now;
-
-            return new CurrentGameViewModel()
+            if(currentGame != null) 
             {
-                LastGameStart = currentGame.StartTime,
-                TimeLeft = timeLeft,
-                CurrentGameLasts = true,
-                GameId = currentGame.Id
-            };
+                var endTime = currentGame.StartTime.AddMinutes(_options.Value.GameDuration);
+                var timeLeft = endTime - DateTime.Now;
+
+                result.CurrentGameTimeLeft = new GameTimeLeftViewModel()
+                {
+                    Label = "Current game time left",
+                    SecondsLeft = (int)timeLeft.TotalSeconds
+                };
+
+                result.CurrentlyPlayingPlayers = currentGame.Players
+                    .Select(t => new PlayerViewModel(t.Player))
+                    .ToList();
+            }
+
+            // Get queued players
+            var queuedPlayers = _playerQueueService.GetQueuedPlayers();
+
+            if(queuedPlayers != null)
+            {
+                result.QueuedPlayers = queuedPlayers
+                    .Select(t => new PlayerViewModel(t.Player))
+                    .ToList();
+
+                result.EstimatedGameTimeLeft = new GameTimeLeftViewModel()
+                {
+                    Label = "Estimated waiting time left",
+                    SecondsLeft = 100
+                };
+            }
+
+            return result;
+        }
+
+        public FinishGameViewModel GetFinishGameViewModel(Player player)
+        {
+            // User has a game without winner
+
+            var lastGame = _gameServices.GetPlayerLastGame(player.Id);
+            if(lastGame != null && lastGame.WinnersTeam == null)
+            {
+                var teams = lastGame.Players
+                    .Where(p => p.Player != null)
+                    .GroupBy(t => t.Team, v => v.Player.ToString())
+                    .ToDictionary(x => x.Key, y => (IList<string>)y.ToList());
+                
+                return new FinishGameViewModel()
+                {
+                    GameId = lastGame.Id,
+                    Teams = teams
+                };
+            }
+            return null;
         }
 
         public Game CreateGame(IEnumerable<IEnumerable<int>> teams)
@@ -71,25 +115,6 @@ namespace CorpoGameApp.Logic
         {
             var result = _gameServices.EndGame(gameId, winningTeam);
             return result;
-        }
-
-        private CurrentGameViewModel GetLastGameWithoutOutcome(Player player)
-        {
-            var lastGame = _gameServices.GetPlayerLastGame(player.Id);
-            if(lastGame != null && lastGame.WinnersTeam == null)
-            {
-                var teams = lastGame.Players
-                    .Where(p => p.Player != null)
-                    .GroupBy(t => t.Team, v => v.Player.ToString())
-                    .ToDictionary(x => x.Key, y => (IList<string>)y.ToList());
-                return new CurrentGameViewModel()
-                {
-                    GameId = lastGame.Id,
-                    CurrentGameLasts = false,
-                    Teams = teams
-                };
-            }
-            return null;
         }
     }
 }
