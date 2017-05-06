@@ -11,5 +11,6 @@ namespace CorpoGameApp.Logic
         SearchGameViewModel GetSearchGameViewModel(Player player);
         Game CreateGame(IEnumerable<IEnumerable<int>> teams);
         bool EndGame(int gameId, int? winningTeam);
+        void UpdateQueuedGames();
     }
 }

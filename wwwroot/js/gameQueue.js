@@ -9,7 +9,7 @@ $(function() {
             .format(player.Name, player.Surname, player.Score);
         
         var newItem = $("<li>")
-            .addClass("list-group-item")
+            // .addClass("list-group-item")
             .text(playerString)
 
         if(player.Id === currentPlayerId) {

@@ -12,9 +12,9 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Net.Http.Headers;
 using System.Linq;
-using CorpoGameApp.Controllers.Enums;
 using System.Collections.Generic;
 using Hangfire;
+using CorpoGameApp.Enums;
 
 namespace CorpoGameApp.Controllers
 {

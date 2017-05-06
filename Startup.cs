@@ -123,7 +123,6 @@ namespace CorpoGameApp
             try
             {
                 DbInitialization.Initialize(context);
-                DbInitialization.Seed(context);
             }
             catch(Exception ex)
             {

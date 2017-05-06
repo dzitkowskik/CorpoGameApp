@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CorpoGameApp.Data;
-using CorpoGameApp.Enums;
 using CorpoGameApp.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace CorpoGameApp.Services
 {
@@ -11,27 +12,23 @@ namespace CorpoGameApp.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IPlayerServices _playerServices;
+        private readonly ILogger<PlayerQueueService> _logger;
 
         public PlayerQueueService(
             ApplicationDbContext context,
-            IPlayerServices playerServices)
+            IPlayerServices playerServices,
+            ILoggerFactory loggerFactory)
         {
             this._playerServices = playerServices;
             _context = context;
+            _logger = loggerFactory.CreateLogger<PlayerQueueService>();
         }
 
-        public IList<PlayerQueueItem> GetQueuedPlayers()
+        public IEnumerable<PlayerQueueItem> GetQueuedPlayers()
         {
-            var queuedEnumId = (int)QueuedItemStateEnum.Queued;
-
-            var queueItems = _context.PlayerQueueItems
+            return _context.PlayerQueueItems
                 .Include(t => t.Player)
                 .Include(t => t.Player.User)
-                .Include(t => t.State)
-                .ToList();
-
-            return queueItems
-                .Where(t => t.State.Id == queuedEnumId)
                 .ToList();
         }
 
@@ -40,11 +37,11 @@ namespace CorpoGameApp.Services
             var item = new PlayerQueueItem()
             {
                 Player = player,
-                State = GetState(QueuedItemStateEnum.Queued)
+                JoinedTime = DateTime.UtcNow
             };
             using(var transaction = _context.Database.BeginTransaction())
             {
-                if(_context.PlayerQueueItems.Any(t => t.Id == item.Player.Id))
+                if(GetQueuedPlayers().Any(t => t.Player.Id == player.Id))
                     throw new PlayerAlreadyQeueuedException();
                 _context.PlayerQueueItems.Add(item);
                 var result = _context.SaveChanges();
@@ -53,21 +50,22 @@ namespace CorpoGameApp.Services
             }
         }
 
-        public int UpdateQueuedPlayerState(Player player, QueuedItemStateEnum newState)
+        public bool Dequeue(PlayerQueueItem item)
         {
-            var item = _context.PlayerQueueItems
-                .Include(t => t.Player)
-                .FirstOrDefault(t => t.Player.Id == player.Id);
-
-            item.State = GetState(newState);
-
-            _context.PlayerQueueItems.Update(item);
-            return _context.SaveChanges();
-        }
-
-        public QueueItemState GetState(QueuedItemStateEnum stateEnum)
-        {
-            return _context.QueueItemStates.First(t => t.Id == (int)stateEnum);
+            try
+            {
+                _context.PlayerQueueItems.Remove(item);
+                _context.SaveChanges();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(
+                    new EventId(), 
+                    ex, 
+                    $"Error while dequeueing player {item.Player.Id}");
+                return false;
+            }
         }
     }
 }

@@ -17,9 +17,9 @@
         <button id="SearchGameJoinGameQueue" class="btn btn-primary pull-right">Join game queue</button>
         <hr>
         <div class="col-md-6">
-            <ol class="list-group" id="currentPlayersList">
+            <ol class="" id="currentPlayersList">
                 @foreach(var player in Model.CurrentlyPlayingPlayers) {
-                    <li class="list-group-item">@player.Name (score: @player.Score)</li>
+                    <li class="">@player.Name (score: @player.Score)</li>
                 }
             </ol>
         </div>
@@ -33,12 +33,12 @@
         <span>Players queued:</span>
         <hr>
         <div class="col-md-6">
-            <ol class="list-group" id="queuedPlayersList">
+            <ol class="" id="queuedPlayersList">
                 @foreach(var player in Model.QueuedPlayers) {
                     if(player.IsCurrent) {
-                        <li class="list-group-item">@player.Name @player.Surname (score: @player.Score)</li>
+                        <li class="">@player.Name @player.Surname (score: @player.Score)</li>
                     } else {
-                        <li class="list-group-item list-group-item-info">@player.Name @player.Surname (score: @player.Score)</li>
+                        <li class="list-group-item-info">@player.Name @player.Surname (score: @player.Score)</li>
                     }
                 }
             </ol>

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,8 +12,6 @@ namespace CorpoGameApp.Models
 
         public virtual Player Player { get; set; }
 
-        public bool Played { get; set; }
-
-        public virtual QueueItemState State { get; set; }
+        public DateTime JoinedTime { get; set; }
     }
 }

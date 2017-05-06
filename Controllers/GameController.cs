@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using CorpoGameApp.Logic;
+using CorpoGameApp.Enums;
 
 namespace CorpoGameApp.Controllers
 {
@@ -22,7 +23,6 @@ namespace CorpoGameApp.Controllers
 
         private readonly IStatisticsServices _statiticsServices;
         private readonly ILogger _logger;
-        private readonly IEmailServices _emailServices;
         private readonly IGameLogic _gameLogic;
 
         public GameController(

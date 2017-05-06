@@ -84,7 +84,6 @@ namespace CorpoGameApp.Logic
         public FinishGameViewModel GetFinishGameViewModel(Player player)
         {
             // User has a game without winner
-
             var lastGame = _gameServices.GetPlayerLastGame(player.Id);
             if(lastGame != null && lastGame.WinnersTeam == null)
             {
@@ -102,6 +101,25 @@ namespace CorpoGameApp.Logic
             return null;
         }
 
+        public void UpdateQueuedGames()
+        {
+            var requiredPlayersNo = _options.Value.TeamNumber * _options.Value.TeamSize;
+
+            if(_gameServices.GetCurrentGame() != null) return;
+
+            var queuedPlayers = _playerQueueService.GetQueuedPlayers();
+
+            if(queuedPlayers.Count() < requiredPlayersNo) return;
+
+            // create a game
+            var selectedPlayerQueueItems = queuedPlayers.Take(requiredPlayersNo);
+            var gameCreated = CreateGame(SelectRandomTeams(selectedPlayerQueueItems.Select(t => t.Player)));
+
+            // dequeue players
+            foreach(var queueItem in selectedPlayerQueueItems)
+                _playerQueueService.Dequeue(queueItem);
+        }
+
         public Game CreateGame(IEnumerable<IEnumerable<int>> teams)
         {
             var result = _gameServices.CreateGame(teams);
@@ -115,6 +133,12 @@ namespace CorpoGameApp.Logic
         {
             var result = _gameServices.EndGame(gameId, winningTeam);
             return result;
+        }
+
+        private List<List<int>> SelectRandomTeams(IEnumerable<Player> players)
+        {
+            var teams = new List<List<int>>();
+            return teams;
         }
     }
 }

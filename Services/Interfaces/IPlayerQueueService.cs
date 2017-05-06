@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using CorpoGameApp.Enums;
 using CorpoGameApp.Models;
 
 namespace CorpoGameApp.Services
 {
     public interface IPlayerQueueService
     {
-        IList<PlayerQueueItem> GetQueuedPlayers();
+        IEnumerable<PlayerQueueItem> GetQueuedPlayers();
         int QueuePlayer(Player player);
-        int UpdateQueuedPlayerState(Player player, QueuedItemStateEnum newState);
+        bool Dequeue(PlayerQueueItem item);
     }
-}
+}   
