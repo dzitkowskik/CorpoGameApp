@@ -138,6 +138,31 @@ namespace CorpoGameApp.Logic
         private List<List<int>> SelectRandomTeams(IEnumerable<Player> players)
         {
             var teams = new List<List<int>>();
+            var list = players.ToList();
+
+            var teamsCount = _options.Value.TeamNumber;
+            var teamsSize = _options.Value.TeamSize;
+
+            if(list.Count != teamsCount * teamsSize)
+                throw new Exception("Team size does not match");
+
+            var rand = new Random();
+            
+            Func<int> getPlayerId = () =>
+            {
+                var selectedPlayerIdx = rand.Next() % list.Count;
+                var player = list[selectedPlayerIdx];
+                list.Remove(player);
+                return player.Id;
+            };
+
+            for(int teamIdx = 0; teamIdx < teamsCount; teamIdx++)
+            {
+                teams.Insert(teamIdx, new List<int>());
+                for(int i = 0; i < teamsSize; i++)
+                    teams[teamIdx].Add(getPlayerId());
+            }
+
             return teams;
         }
     }
