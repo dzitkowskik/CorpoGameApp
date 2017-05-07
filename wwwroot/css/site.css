@@ -171,6 +171,18 @@ div.alert {
     color: #9d9d9d;
 }
 
+.team-search-section {
+    height: 50%;
+    padding-top: 50px;
+    text-align: center;
+    background: #222222;
+    color: #9d9d9d;
+}
+
+.team-queue-list {
+    text-align: left;
+}
+
 .default-section {
     width: 100%;
     height: 100%;

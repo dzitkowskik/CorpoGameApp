@@ -1,0 +1,7 @@
+@model PlayerViewModel
+
+@if(Model.IsCurrent) {
+    <li class="list-group-item-info">@Model.Name @Model.Surname (score: @Model.Score)</li>
+} else {
+    <li class="">@Model.Name @Model.Surname (score: @Model.Score)</li>
+}

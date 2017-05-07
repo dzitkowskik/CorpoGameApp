@@ -8,7 +8,7 @@ namespace CorpoGameApp.Logic
     {
         NewGameViewModel GetNewGameViewModel();
         FinishGameViewModel GetFinishGameViewModel(Player player);
-        SearchGameViewModel GetSearchGameViewModel(Player player);
+        SearchGameViewModel GetSearchGameViewModel(Player player = null);
         Game CreateGame(IEnumerable<IEnumerable<int>> teams);
         bool EndGame(int gameId, int? winningTeam);
         void UpdateQueuedGames();

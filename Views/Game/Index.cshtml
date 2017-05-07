@@ -34,8 +34,7 @@
             <div id="gameDiv" class="col-lg-12">
                 @if(Model.FinishGame != null) {
                     @Html.Partial("Partial/FinishGame.cshtml", Model.FinishGame)
-                }
-                @if(Model.NewGame != null) {
+                } else {
                     @Html.Partial("Partial/NewGame.cshtml", Model.NewGame)
                 }
             </div>

@@ -36,14 +36,15 @@ namespace CorpoGameApp.Logic
                 players, 
                 _options.Value.TeamNumber, 
                 _options.Value.TeamSize);
+
+            newGameViewModel.Label = "Create a new game";
             return newGameViewModel;
         }
 
-        public SearchGameViewModel GetSearchGameViewModel(Player player)
+        public SearchGameViewModel GetSearchGameViewModel(Player player = null)
         {
             var result = new SearchGameViewModel();
-            result.CurrentPlayerId = player.Id;
-
+           
             // Check if a not ended game exists
             var currentGame = _gameServices.GetCurrentGame();
             if(currentGame != null) 
@@ -60,6 +61,7 @@ namespace CorpoGameApp.Logic
                 result.CurrentlyPlayingPlayers = currentGame.Players
                     .Select(t => new PlayerViewModel(t.Player))
                     .ToList();
+
             }
 
             // Get queued players
@@ -70,12 +72,23 @@ namespace CorpoGameApp.Logic
                 result.QueuedPlayers = queuedPlayers
                     .Select(t => new PlayerViewModel(t.Player))
                     .ToList();
+            }
 
-                result.EstimatedGameTimeLeft = new GameTimeLeftViewModel()
-                {
-                    Label = "Estimated waiting time left",
-                    SecondsLeft = 100
-                };
+            result.GameDurationInSeconds = new TimeSpan(0, _options.Value.GameDuration, 0).Seconds;
+            result.GameCapacity = _options.Value.TeamSize * _options.Value.TeamNumber;
+
+            result.Label = "Search for team";
+
+            // set current player
+            if(player != null)
+            {
+                result.CurrentPlayerId = player.Id;
+                if(result.CurrentlyPlayingPlayers != null)
+                    foreach(var p in result.CurrentlyPlayingPlayers)
+                        p.IsCurrent = p.Id == player.Id;
+                if(result.QueuedPlayers != null)
+                    foreach(var p in result.QueuedPlayers)
+                        p.IsCurrent = p.Id == player.Id;
             }
 
             return result;

@@ -29,7 +29,7 @@ namespace CorpoGameApp.Hubs
 
             _gameLogic.UpdateQueuedGames();
 
-            Clients.All.updateTeamQueueList(_gameLogic.GetSearchGameViewModel(player));
+            Clients.All.updateTeamQueueList(_gameLogic.GetSearchGameViewModel());
         }
     }
 }
