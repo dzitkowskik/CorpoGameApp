@@ -57,6 +57,10 @@ $(function() {
         return currentTimeLeft + gameDuration * gamesLeft;
     }
 
+    chat.client.refresh = function () {
+        location.reload();
+    }
+
     chat.client.updateTeamQueueList = function (searchGameViewModel) {
         console.log(searchGameViewModel);
 

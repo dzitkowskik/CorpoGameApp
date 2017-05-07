@@ -48,8 +48,8 @@ namespace CorpoGameApp.Controllers
 
             var gameViewModel = new GameViewModel() {
                 NewGame = _gameLogic.GetNewGameViewModel(),
-                CurrentPlayer = new PlayerViewModel(player),
                 FinishGame = _gameLogic.GetFinishGameViewModel(player),
+                CurrentPlayer = new PlayerViewModel(player),
                 SearchGame = _gameLogic.GetSearchGameViewModel(player),
                 Statistics = new List<StatisticsViewModel>()
                 {

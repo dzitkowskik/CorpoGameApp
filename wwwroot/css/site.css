@@ -171,7 +171,7 @@ div.alert {
 }
 
 .reservation-section {
-    height: 100%;
+    height: 50%;
     padding-top: 50px;
     text-align: center;
     background: #222222;
@@ -179,7 +179,6 @@ div.alert {
 }
 
 .team-search-section {
-    height: 100%;
     padding-top: 50px;
     text-align: center;
     background: #222222;

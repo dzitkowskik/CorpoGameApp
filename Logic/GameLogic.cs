@@ -36,6 +36,10 @@ namespace CorpoGameApp.Logic
 
         public NewGameViewModel GetNewGameViewModel()
         {
+            // do not return new game view model if current game is in progress
+            var currentGame = _gameServices.GetCurrentGame();
+            if(currentGame != null) return null;
+
             var players = _playerServices.GetAllPlayers();
             var newGameViewModel = new NewGameViewModel(
                 players, 
@@ -79,7 +83,9 @@ namespace CorpoGameApp.Logic
                     .ToList();
             }
 
-            result.GameDurationInSeconds = new TimeSpan(0, _options.Value.GameDuration, 0).Seconds;
+            result.GameDurationInSeconds = (int)(
+                    new TimeSpan(0, _options.Value.GameDuration, 0)
+                    .TotalSeconds);
             result.GameCapacity = _options.Value.TeamSize * _options.Value.TeamNumber;
 
             result.Label = "Search for team";
@@ -122,20 +128,18 @@ namespace CorpoGameApp.Logic
         public void UpdateQueuedGames(bool refreshClients = false)
         {
             var requiredPlayersNo = _options.Value.TeamNumber * _options.Value.TeamSize;
-
-            if(_gameServices.GetCurrentGame() != null) return;
-
             var queuedPlayers = _playerQueueService.GetQueuedPlayers();
 
-            if(queuedPlayers.Count() < requiredPlayersNo) return;
+            if(_gameServices.GetCurrentGame() == null && queuedPlayers.Count() >= requiredPlayersNo)
+            {
+                // create a game
+                var selectedPlayerQueueItems = queuedPlayers.Take(requiredPlayersNo);
+                var gameCreated = CreateGame(SelectRandomTeams(selectedPlayerQueueItems.Select(t => t.Player)));
 
-            // create a game
-            var selectedPlayerQueueItems = queuedPlayers.Take(requiredPlayersNo);
-            var gameCreated = CreateGame(SelectRandomTeams(selectedPlayerQueueItems.Select(t => t.Player)));
-
-            // dequeue players
-            foreach(var queueItem in selectedPlayerQueueItems)
-                _playerQueueService.Dequeue(queueItem);
+                // dequeue players
+                foreach(var queueItem in selectedPlayerQueueItems)
+                    _playerQueueService.Dequeue(queueItem);
+            }
 
             if(refreshClients)
             {
