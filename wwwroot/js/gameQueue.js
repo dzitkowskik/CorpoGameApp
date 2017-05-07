@@ -1,22 +1,35 @@
 $(function() {
 
     var chat = $.connection.gameQueueHub;
+    togglePlayersList();
 
-    var currentPlayerId = 0;
+    function togglePlayersList() {
+        if($('#currentPlayersList').children().length > 0)
+        {
+            $('#CurrentlyPlayingPlayersListDiv').show();
+        }
+        else
+        {
+            $('#CurrentlyPlayingPlayersListDiv').hide();
+        }
+    }
 
     function appendPlayerToList(player, list) {
+        var currentPlayerId = $('#SeachGameCurrentPlayerId').val();
+
         var playerString = '{0} {1} (score: {2})'
             .format(player.Name, player.Surname, player.Score);
         
         var newItem = $("<li>")
-            .addClass("list-group-item")
-            .text(playerString)
+            .addClass('list-group-item')
+            .text(playerString);
 
         if(player.Id === currentPlayerId) {
-            newItem.addClass('list-group-item-info')
+            newItem.addClass('list-group-item-success')
         }
 
         list.append(newItem);
+        togglePlayersList();
     }
 
     function fillPlayerList(players, list) {
@@ -28,10 +41,28 @@ $(function() {
         }
     }
 
+    function getEstimatedTimeToPlay(players, gameDuration, currentTimeLeft, capacity)
+    {
+        var currentPlayerId = $('#SeachGameCurrentPlayerId').val();
+
+        for(var i = 0; i < players.length; i++)
+        {
+            if(players[i].Id == currentPlayerId)
+            { 
+                break;
+            }
+        }
+
+        var gamesLeft = i / capacity
+        return currentTimeLeft + gameDuration * gamesLeft;
+    }
+
+    chat.client.refresh = function () {
+        location.reload();
+    }
+
     chat.client.updateTeamQueueList = function (searchGameViewModel) {
         console.log(searchGameViewModel);
-
-        currentPlayerId = searchGameViewModel.CurrentPlayerId;
 
         var currentPlayersListElement = $('#currentPlayersList');
         var queuedPlayersListElement = $('#queuedPlayersList');
@@ -47,13 +78,19 @@ $(function() {
         fillPlayerList(queuedPlayers, queuedPlayersListElement);
 
         // update time left
+        var currentTimeLeft = 0;
         if(searchGameViewModel.CurrentGameTimeLeft != null) {
-            $('#currentGameTimeLeft').val(searchGameViewModel.CurrentGameTimeLeft.secondsLeft);
+            currentTimeLeft = searchGameViewModel.CurrentGameTimeLeft.secondsLeft;
+            $('#currentGameTimeLeft').val(currentTimeLeft);
             $('#currentGameTimeLeft').siblings().find("label").val(searchGameViewModel.CurrentGameTimeLeft.Label);
         }
         if(searchGameViewModel.EstimatedGameTimeLeft != null) {
-            $('#estimatedGameTimeLeft').val(searchGameViewModel.EstimatedGameTimeLeft.secondsLeft);
-            $('#estimatedGameTimeLeft').siblings().find("label").val(searchGameViewModel.EstimatedGameTimeLeft.Label);
+            $('#estimatedGameTimeLeft').val(
+                getEstimatedTimeToPlay(
+                    queuedPlayers,
+                    searchGameViewModel.GameDurationInSeconds,
+                    currentTimeLeft,
+                    searchGameViewModel.GameCapacity));
         }
     }
 

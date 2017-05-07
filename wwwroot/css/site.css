@@ -6,6 +6,13 @@ html {
     background-size: cover;
 }
 
+
+
+ol li.list-group-item { 
+    list-style: decimal inside;
+    display: list-item;
+}
+
 footer {
     padding: 15px 0px 15px 15px;
     color: #9d9d9d;
@@ -119,7 +126,7 @@ div.alert {
 }
 
 .intro-section {
-    height: 50%;
+    height: 100%;
     text-align: center;
     background-size: cover;
     color: #9d9d9d;
@@ -169,6 +176,17 @@ div.alert {
     text-align: center;
     background: #222222;
     color: #9d9d9d;
+}
+
+.team-search-section {
+    padding-top: 50px;
+    text-align: center;
+    background: #222222;
+    color: #9d9d9d;
+}
+
+.team-queue-list {
+    text-align: left;
 }
 
 .default-section {

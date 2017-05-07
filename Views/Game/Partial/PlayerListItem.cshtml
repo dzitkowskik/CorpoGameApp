@@ -1,0 +1,8 @@
+@model PlayerViewModel
+
+<li class="list-group-item">
+    @Model.Name @Model.Surname (score: @Model.Score)
+    @if(Model.IsCurrent) {
+        <span class="glyphicon glyphicon-star pull-right"></span>
+    }    
+</li>

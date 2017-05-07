@@ -12,6 +12,7 @@ using CorpoGameApp.Properties;
 using System;
 using Hangfire;
 using CorpoGameApp.Logic;
+using CorpoGameApp.Hubs;
 
 namespace CorpoGameApp
 {
@@ -58,7 +59,7 @@ namespace CorpoGameApp
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 4;
                 options.Password.RequireNonAlphanumeric = false;          
-                options.SignIn.RequireConfirmedEmail = true;      
+                options.SignIn.RequireConfirmedEmail = !_environment.IsDevelopment();      
             });
 
             services.AddSignalR(options => 
@@ -123,7 +124,6 @@ namespace CorpoGameApp
             try
             {
                 DbInitialization.Initialize(context);
-                DbInitialization.Seed(context);
             }
             catch(Exception ex)
             {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CorpoGameApp.Controllers
+namespace CorpoGameApp.Enums
 {
     public sealed class GameMessageType
     {

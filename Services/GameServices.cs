@@ -66,6 +66,12 @@ namespace CorpoGameApp.Services
                 .ThenInclude(x => x.User);
         }
 
+        public Game Find(int gameId)
+        {
+            return GetAllGames()
+                .FirstOrDefault(t => t.Id == gameId);
+        }
+
         public Game GetCurrentGame()
         {
             return GetAllGames()
@@ -74,9 +80,12 @@ namespace CorpoGameApp.Services
 
         public bool EndGame(int gameId, int? wonTeam)
         {
-            var game = GetAllGames()
-                .Single(t => t.Id == gameId);
-            game.EndTime = DateTime.Now;
+            var game = Find(gameId);
+            if(game == null) 
+                return false;
+
+            if(!game.EndTime.HasValue)
+                game.EndTime = DateTime.Now;
 
             if(wonTeam.HasValue)
             {

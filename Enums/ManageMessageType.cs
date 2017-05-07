@@ -1,4 +1,4 @@
-namespace CorpoGameApp.Controllers.Enums
+namespace CorpoGameApp.Enums
 {
     public enum ManageMessageType
     {

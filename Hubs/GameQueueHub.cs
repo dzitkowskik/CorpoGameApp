@@ -27,7 +27,13 @@ namespace CorpoGameApp.Hubs
 
             _playerQueueService.QueuePlayer(player);
 
-            Clients.All.updateTeamQueueList(_gameLogic.GetSearchGameViewModel(player));
+            _gameLogic.UpdateQueuedGames();
+            Clients.All.updateTeamQueueList(_gameLogic.GetSearchGameViewModel());
+        }
+
+        public void Refresh()
+        {
+            Clients.All.refreshPage();
         }
     }
 }
