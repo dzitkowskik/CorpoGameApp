@@ -12,6 +12,7 @@ using CorpoGameApp.Properties;
 using System;
 using Hangfire;
 using CorpoGameApp.Logic;
+using CorpoGameApp.Hubs;
 
 namespace CorpoGameApp
 {

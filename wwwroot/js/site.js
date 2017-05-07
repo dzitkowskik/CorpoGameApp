@@ -7,8 +7,10 @@ $(window).scroll(function() {
     }
 });
 
-//jQuery for page scrolling feature - requires jQuery Easing plugin
+
 $(function() {
+
+    //jQuery for page scrolling feature - requires jQuery Easing plugin
     $('a.page-scroll').bind('click', function(event) {
         var $anchor = $(this);
         $('html, body').stop().animate({
@@ -16,9 +18,15 @@ $(function() {
         }, 1500, 'easeInOutExpo');
         event.preventDefault();
     });
+
+    // run clocks
+    runClock('#currentGameTimeLeft');
+    runClock('#estimatedGameTimeLeft');
+
+    refreshPlayerLists()
 });
 
-var selectedPlayers = function(first, second) {
+function selectedPlayers(first, second) {
     $(first).on('changed.bs.select', function (e, clickedIndex, newValue, oldValue) {
         console.log(clickedIndex);
         console.log(newValue);
@@ -46,8 +54,6 @@ function refreshPlayerLists() {
     }
 }
 
-$(refreshPlayerLists());
-
 function createGame(actionUrl) {
     var postData = {
         "FirstTeam": $("#firstTeamSelect").val(),
@@ -59,13 +65,13 @@ function createGame(actionUrl) {
     });
 }
 
-$(function(){
-    var secLeft = $('#current-game-clockdown-value').text();
-
-    var clock = $('.current-game-clockdown').FlipClock(secLeft, {
-        autoStart: false,
-        countdown: true,
-        clockFace: 'MinuteCounter'
-    });
+function runClock(clockName) {
+    var clock = $(clockName).FlipClock(
+        $(clockName).text(), 
+        {
+            autoStart: false,
+            countdown: true,
+            clockFace: 'MinuteCounter'
+        });
     clock.start();
-});
+}

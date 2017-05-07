@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CorpoGameApp.Hubs;
 using CorpoGameApp.Models;
 using CorpoGameApp.Properties;
 using CorpoGameApp.Services;
 using CorpoGameApp.ViewModels.Game;
 using Hangfire;
+using Microsoft.AspNetCore.SignalR.Infrastructure;
 using Microsoft.Extensions.Options;
 
 namespace CorpoGameApp.Logic
@@ -16,17 +18,20 @@ namespace CorpoGameApp.Logic
         private readonly IPlayerServices _playerServices;
         private readonly IOptions<GameSettings> _options;
         private readonly IPlayerQueueService _playerQueueService;
+        private readonly IConnectionManager _connectionManager;
 
         public GameLogic(
             IGameServices gameServices,
             IPlayerQueueService playerQueueService,
             IPlayerServices playerServices,
-            IOptions<GameSettings> options)
+            IOptions<GameSettings> options,
+            IConnectionManager connectionManager)
         {
             this._playerServices = playerServices;
             this._gameServices = gameServices;
             this._options = options;
             this._playerQueueService = playerQueueService;
+            this._connectionManager = connectionManager;
         }
 
         public NewGameViewModel GetNewGameViewModel()
@@ -114,7 +119,7 @@ namespace CorpoGameApp.Logic
             return null;
         }
 
-        public void UpdateQueuedGames()
+        public void UpdateQueuedGames(bool refreshClients = false)
         {
             var requiredPlayersNo = _options.Value.TeamNumber * _options.Value.TeamSize;
 
@@ -131,11 +136,18 @@ namespace CorpoGameApp.Logic
             // dequeue players
             foreach(var queueItem in selectedPlayerQueueItems)
                 _playerQueueService.Dequeue(queueItem);
+
+            if(refreshClients)
+            {
+                var hubContext = _connectionManager.GetHubContext<GameQueueHub>();
+                hubContext.Clients.All.refresh();
+            }
         }
 
         public Game CreateGame(IEnumerable<IEnumerable<int>> teams)
         {
             var result = _gameServices.CreateGame(teams);
+            UpdateQueuedGames(true);
             BackgroundJob.Schedule<IGameLogic>(
                 logic => logic.EndGame(result.Id, null),
                 TimeSpan.FromMinutes(_options.Value.GameDuration));
@@ -145,6 +157,7 @@ namespace CorpoGameApp.Logic
         public bool EndGame(int gameId, int? winningTeam)
         {
             var result = _gameServices.EndGame(gameId, winningTeam);
+            UpdateQueuedGames(true);
             return result;
         }
 

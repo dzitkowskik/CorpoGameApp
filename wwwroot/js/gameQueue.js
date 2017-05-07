@@ -20,10 +20,12 @@ $(function() {
         var playerString = '{0} {1} (score: {2})'
             .format(player.Name, player.Surname, player.Score);
         
-        var newItem = $("<li>").text(playerString);
+        var newItem = $("<li>")
+            .addClass('list-group-item')
+            .text(playerString);
 
         if(player.Id === currentPlayerId) {
-            newItem.addClass('list-group-item-info')
+            newItem.addClass('list-group-item-success')
         }
 
         list.append(newItem);

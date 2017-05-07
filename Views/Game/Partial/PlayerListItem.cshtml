@@ -1,7 +1,8 @@
 @model PlayerViewModel
 
-@if(Model.IsCurrent) {
-    <li class="list-group-item-info">@Model.Name @Model.Surname (score: @Model.Score)</li>
-} else {
-    <li class="">@Model.Name @Model.Surname (score: @Model.Score)</li>
-}
+<li class="list-group-item">
+    @Model.Name @Model.Surname (score: @Model.Score)
+    @if(Model.IsCurrent) {
+        <span class="glyphicon glyphicon-star pull-right"></span>
+    }    
+</li>

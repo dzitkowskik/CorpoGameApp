@@ -26,15 +26,15 @@
             <div class="col-sm-12">
                 <div class="col-sm-6">
                     <h3>Currently playing:</h3>
-                    <ol class="" id="currentPlayersList">
+                    <ol class="list-group" id="currentPlayersList">
                         @foreach(var player in Model.CurrentlyPlayingPlayers) {
                             @Html.Partial("PlayerListItem.cshtml", player)
                         }
                     </ol>
                 </div>
                 <div class="col-sm-6">
-                    <label>@Model?.CurrentGameTimeLeft?.Label</label>
-                    <p id="currentGameTimeLeft">@Model?.CurrentGameTimeLeft?.SecondsLeft</p>
+                    <h3>@Model?.CurrentGameTimeLeft?.Label</h3>
+                    <p class="current-game-clockdown" id="currentGameTimeLeft">@Model?.CurrentGameTimeLeft?.SecondsLeft</p>
                 </div>
             </div>
         </div>
@@ -42,15 +42,15 @@
             <div class="col-sm-12">
                 <div class="col-sm-6">
                     <h3>Players queued:</h3>
-                    <ol class="" id="queuedPlayersList">
+                    <ol class="list-group" id="queuedPlayersList">
                         @foreach(var player in Model.QueuedPlayers) {
                             @Html.Partial("PlayerListItem.cshtml", player)
                         }
                     </ol>
                 </div>
                 <div class="col-sm-6">
-                    <label>Estimated time to play</label>
-                    <p id="estimatedGameTimeLeft"></p>
+                    <h3>Estimated waiting time:</h3>
+                    <p class="current-game-clockdown" id="estimatedGameTimeLeft"></p>
                 </div>
             </div>
         </div>
