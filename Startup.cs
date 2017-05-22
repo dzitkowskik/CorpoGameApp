@@ -64,6 +64,7 @@ namespace CorpoGameApp
             services.AddSignalR(options => 
             {
                 options.Hubs.EnableDetailedErrors = true;
+                options.Hubs.EnableJavaScriptProxies = true;
             });
 
             // MVC
@@ -84,7 +85,11 @@ namespace CorpoGameApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ApplicationDbContext context)
+        public void Configure(
+            IApplicationBuilder app, 
+            IHostingEnvironment env, 
+            ILoggerFactory loggerFactory, 
+            ApplicationDbContext context)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();

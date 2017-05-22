@@ -3,6 +3,9 @@
 <li class="list-group-item">
     @Model.Name @Model.Surname (score: @Model.Score)
     @if(Model.IsCurrent) {
-        <span class="glyphicon glyphicon-star pull-right"></span>
+        <span class="glyphicon glyphicon-star pull-left"></span>
+        <div class="btn-group pull-right">
+            <button class="btn btn-danger btn-xs pull-right" id="LeaveQueueButtnon" style="min-height: 10px">Leave</button>
+        </div>
     }    
 </li>
