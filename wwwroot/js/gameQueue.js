@@ -1,6 +1,7 @@
 $(function() {
 
-    var chat = $.connection.gameQueueHub;
+    let connection = new signalR.HubConnection('/GameQueueHub');
+
     togglePlayersList();
 
     function togglePlayersList() {
@@ -56,11 +57,7 @@ $(function() {
         return currentTimeLeft + gameDuration * gamesLeft;
     }
 
-    chat.client.refresh = function() {
-        location.reload();
-    }
-
-    chat.client.updateTeamQueueList = function(searchGameViewModel) {
+    function updateTeamQueueList(searchGameViewModel) {
         console.log(searchGameViewModel);
 
         var currentPlayersListElement = $('#currentPlayersList');
@@ -93,24 +90,18 @@ $(function() {
         }
     }
 
-    $.connection.hub.logging = true;
-    $.connection.hub.start().done(function() {
-        $("#SearchGameJoinGameQueue").click(function() {
-            chat.server.joinQueue($('#SeachGameCurrentPlayerId').val());
-        });
-        $("#LeaveQueueButtnon").click(function() {
-            chat.server.leaveQueue($('#SeachGameCurrentPlayerId').val());
-        });
+    connection.on('refresh', function() {
+        location.reload();
     });
 
+    connection.on('updateTeamQueueList', data => updateTeamQueueList(data));
 
-    String.prototype.format = String.prototype.f = function() {
-        var s = this,
-            i = arguments.length;
-
-        while (i--) {
-            s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
-        }
-        return s;
-    };
+    connection.start().then(() => {
+        $("#SearchGameJoinGameQueue").click(function() {
+            connection.invoke('joinQueue', $('#SeachGameCurrentPlayerId').val());
+        });
+        $("#LeaveQueueButtnon").click(function() {
+            connection.invoke('leaveQueue', $('#SeachGameCurrentPlayerId').val());
+        });   
+    });
 });
