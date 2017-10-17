@@ -19,19 +19,20 @@ namespace CorpoGameApp.Logic
         private readonly IPlayerServices _playerServices;
         private readonly IOptions<GameSettings> _options;
         private readonly IPlayerQueueService _playerQueueService;
-        private readonly IHubContext<GameQueueHub> _qameQueueHubContext;
+        private readonly IHubContext<GameQueueHub> _gameQueueHubContext;
 
         public GameLogic(
             IGameServices gameServices,
             IPlayerQueueService playerQueueService,
             IPlayerServices playerServices,
             IOptions<GameSettings> options,
-            IHubContext<GameQueueHub> qameQueueHubContext)
+            IHubContext<GameQueueHub> gameQueueHubContext)
         {
             this._playerServices = playerServices;
             this._gameServices = gameServices;
             this._options = options;
             this._playerQueueService = playerQueueService;
+            this._gameQueueHubContext = gameQueueHubContext;
         }
 
         public NewGameViewModel GetNewGameViewModel()
@@ -143,7 +144,7 @@ namespace CorpoGameApp.Logic
 
             if(refreshClients)
             {
-                var hubContext = _qameQueueHubContext;
+                var hubContext = _gameQueueHubContext;
                 hubContext.Clients.All.InvokeAsync("refreshPage");
             }
         }
