@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SendGrid;
 
 namespace CorpoGameApp.Services
 {
     public interface IEmailServices
     {
-        Task SendEmail(string subject, string body, IEnumerable<string> recipients);
+        Task<Response> SendEmail(string subject, string body, IEnumerable<string> recipients);
     }
 }

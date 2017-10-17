@@ -13,6 +13,7 @@ using System;
 using Hangfire;
 using CorpoGameApp.Logic;
 using CorpoGameApp.Hubs;
+using Microsoft.AspNetCore.Identity;
 
 namespace CorpoGameApp
 {
@@ -61,11 +62,7 @@ namespace CorpoGameApp
                 options.SignIn.RequireConfirmedEmail = !_environment.IsDevelopment();      
             });
 
-            services.AddSignalR(options => 
-            {
-                options.Hubs.EnableDetailedErrors = true;
-                options.Hubs.EnableJavaScriptProxies = true;
-            });
+            services.AddSignalR();
 
             // MVC
             services.AddMvc();
@@ -114,7 +111,10 @@ namespace CorpoGameApp
             app.UseIdentity();
             app.UseHangfireServer();
             app.UseWebSockets();
-            app.UseSignalR();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<GameQueueHub>("gameQueueHub");
+            });
 
             // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
 

@@ -7,7 +7,8 @@ using CorpoGameApp.Properties;
 using CorpoGameApp.Services;
 using CorpoGameApp.ViewModels.Game;
 using Hangfire;
-using Microsoft.AspNetCore.SignalR.Infrastructure;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR.Features;
 using Microsoft.Extensions.Options;
 
 namespace CorpoGameApp.Logic
@@ -18,20 +19,19 @@ namespace CorpoGameApp.Logic
         private readonly IPlayerServices _playerServices;
         private readonly IOptions<GameSettings> _options;
         private readonly IPlayerQueueService _playerQueueService;
-        private readonly IConnectionManager _connectionManager;
+        private readonly IHubContext<GameQueueHub> _qameQueueHubContext;
 
         public GameLogic(
             IGameServices gameServices,
             IPlayerQueueService playerQueueService,
             IPlayerServices playerServices,
             IOptions<GameSettings> options,
-            IConnectionManager connectionManager)
+            IHubContext<GameQueueHub> qameQueueHubContext)
         {
             this._playerServices = playerServices;
             this._gameServices = gameServices;
             this._options = options;
             this._playerQueueService = playerQueueService;
-            this._connectionManager = connectionManager;
         }
 
         public NewGameViewModel GetNewGameViewModel()
@@ -143,8 +143,8 @@ namespace CorpoGameApp.Logic
 
             if(refreshClients)
             {
-                var hubContext = _connectionManager.GetHubContext<GameQueueHub>();
-                hubContext.Clients.All.refresh();
+                var hubContext = _qameQueueHubContext;
+                hubContext.Clients.All.InvokeAsync("refreshPage");
             }
         }
 

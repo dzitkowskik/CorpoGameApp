@@ -29,7 +29,7 @@ namespace CorpoGameApp.Hubs
             _playerQueueService.QueuePlayer(player);
 
             _gameLogic.UpdateQueuedGames();
-            Clients.All.updateTeamQueueList(_gameLogic.GetSearchGameViewModel());
+            Clients.All.InvokeAsync("updateTeamQueueList", _gameLogic.GetSearchGameViewModel());
         }
 
         public void LeaveQueue(int playerId)
@@ -41,12 +41,12 @@ namespace CorpoGameApp.Hubs
             if(queuedPlayer != null)
                 _playerQueueService.Dequeue(queuedPlayer);
 
-            Clients.All.updateTeamQueueList(_gameLogic.GetSearchGameViewModel());
+            Clients.All.InvokeAsync("updateTeamQueueList", _gameLogic.GetSearchGameViewModel());
         }
 
         public void Refresh()
         {
-            Clients.All.refreshPage();
+            Clients.All.InvokeAsync("refreshPage");
         }
     }
 }
