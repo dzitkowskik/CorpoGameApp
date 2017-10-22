@@ -1,13 +1,13 @@
 {
-    "version": "0.3.0",
+    "version": "2.0.0",
     "configurations": [{
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceRoot}/bin/Debug/netcoreapp2.0/CorpoGameApp.dll",
+            "program": "${workspaceRoot}/CorpoGameApp/bin/Debug/netcoreapp2.0/CorpoGameApp.dll",
             "args": [],
-            "cwd": "${workspaceRoot}",
+            "cwd": "${workspaceRoot}/CorpoGameApp",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {
@@ -28,7 +28,7 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceRoot}/Views"
+                "/Views": "${workspaceRoot}/CorpoGameApp/Views"
             }
         },
         {
