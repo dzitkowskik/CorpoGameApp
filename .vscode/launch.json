@@ -1,7 +1,8 @@
 {
     "version": "2.0.0",
-    "configurations": [{
-            "name": ".NET Core Launch (web)",
+    "configurations": [
+        {
+            "name": "WEB",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -9,6 +10,7 @@
             "args": [],
             "cwd": "${workspaceRoot}/CorpoGameApp",
             "stopAtEntry": false,
+            "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {
                 "enabled": true,
@@ -36,6 +38,18 @@
             "type": "coreclr",
             "request": "attach",
             "processId": "${command.pickProcess}"
+        },
+        {
+            "name": "TEST",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceRoot}/CorpoGameApp.Test/bin/Debug/netcoreapp2.0/CorpoGameApp.Test.dll",
+            "args": [],
+            "cwd": "${workspaceRoot}/CorpoGameApp.Test",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
         }
     ]
 }
