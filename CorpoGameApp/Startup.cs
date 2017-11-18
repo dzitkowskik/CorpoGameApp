@@ -19,6 +19,7 @@ namespace CorpoGameApp
 {
     public class Startup
     {
+        /* Migration from .net core 1.x to 2.x
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -37,6 +38,14 @@ namespace CorpoGameApp
         }
 
         public IConfigurationRoot Configuration { get; }
+        */
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
 
         private IHostingEnvironment _environment { get; set; }
 
@@ -53,17 +62,16 @@ namespace CorpoGameApp
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddHangfire(config => 
-                config.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
-
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 4;
-                options.Password.RequireNonAlphanumeric = false;          
-                options.SignIn.RequireConfirmedEmail = !_environment.IsDevelopment();      
+                options.Password.RequireNonAlphanumeric = false;
+                options.SignIn.RequireConfirmedEmail = false;      
             });
 
+            // Additional Libraries
+            services.AddHangfire(config => config.UseSqlServerStorage(dbConnectionString));
             services.AddSignalR();
 
             // MVC
@@ -80,7 +88,7 @@ namespace CorpoGameApp
             services.AddTransient<IStatisticsServices, StatisticsServices>();
             services.AddTransient<IEmailServices, EmailServices>();
             services.AddTransient<IGameLogic, GameLogic>();
-            services.AddSingleton<IConfigurationRoot>(Configuration);
+            services.AddSingleton<IConfiguration>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -110,31 +118,20 @@ namespace CorpoGameApp
             }
 
             app.UseStaticFiles();
-            app.UseIdentity();
+            app.UseAuthentication();
             app.UseHangfireServer();
             app.UseWebSockets();
             app.UseSignalR(routes =>
             {
                 routes.MapHub<GameQueueHub>("gameQueueHub");
             });
-
-            // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
-
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Game}/{action=Index}");
             });
-
-            try
-            {
-                DbInitialization.Initialize(context);
-            }
-            catch(Exception ex)
-            {
-                logger.LogError("Error during db initialization -> {0} occured", ex.Message);
-            }
         }
     }
 }

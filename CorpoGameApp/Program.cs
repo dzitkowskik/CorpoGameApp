@@ -5,11 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore;
 
 namespace CorpoGameApp
 {
     public class Program
     {
+        /* Migration from .net core 1.x to 2.x
         public static void Main(string[] args)
         {
             var config = new ConfigurationBuilder()
@@ -28,5 +30,17 @@ namespace CorpoGameApp
 
             host.Run();
         }
+        */
+
+        public static void Main(string[] args)
+        {
+            BuildWebHost(args).Run();
+        }
+
+        public static IWebHost BuildWebHost(string[] args) =>
+                WebHost.CreateDefaultBuilder(args)
+                    .UseStartup<Startup>()
+                    .Build();
+
     }
 }
