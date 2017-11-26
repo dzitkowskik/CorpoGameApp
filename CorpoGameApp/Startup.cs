@@ -19,27 +19,6 @@ namespace CorpoGameApp
 {
     public class Startup
     {
-        /* Migration from .net core 1.x to 2.x
-        public Startup(IHostingEnvironment env)
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables();
-
-            if (env.IsDevelopment())
-            {
-                builder.AddUserSecrets<Startup>();
-            }
-
-            Configuration = builder.Build();
-
-            _environment = env;
-        }
-
-        public IConfigurationRoot Configuration { get; }
-        */
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -95,25 +74,19 @@ namespace CorpoGameApp
         public void Configure(
             IApplicationBuilder app, 
             IHostingEnvironment env, 
-            ILoggerFactory loggerFactory, 
+            ILogger<Startup> logger, 
             ApplicationDbContext context)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-            loggerFactory.AddAzureWebAppDiagnostics();
-
-            var logger = loggerFactory.CreateLogger("Startup.Configure");
+            logger.LogDebug("Configure using {env} environment", env.EnvironmentName);
 
             if (env.IsDevelopment())
             {
-                logger.LogInformation("Using development environment");
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
                 app.UseBrowserLink();
             }
             else
             {
-                logger.LogInformation("Using production environment");
                 app.UseExceptionHandler("/Home/Error");
             }
 
@@ -132,6 +105,8 @@ namespace CorpoGameApp
                     name: "default",
                     template: "{controller=Game}/{action=Index}");
             });
+
+            logger.LogDebug("Configuration finished");
         }
     }
 }

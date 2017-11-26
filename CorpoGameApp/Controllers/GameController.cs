@@ -31,11 +31,11 @@ namespace CorpoGameApp.Controllers
             IStatisticsServices statisticsServices,
             UserManager<ApplicationUser> userManager,
             IOptions<GameSettings> options,
-            ILoggerFactory loggerFactory) : base(userManager, playerServices)
+            ILogger<GameController> logger) : base(userManager, playerServices)
         {
             _gameLogic = gameLogic;
             _statiticsServices = statisticsServices;
-            _logger = loggerFactory.CreateLogger<GameController>();
+            _logger = logger;
         }
 
         [HttpGet]

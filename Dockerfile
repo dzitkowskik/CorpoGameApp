@@ -1,17 +1,24 @@
-FROM microsoft/dotnet:latest
+FROM microsoft/aspnetcore-build:2 AS build-env
 
-RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && rm -rf /var/lib/apt/lists/*
+WORKDIR /apps
 
-COPY . /app
+# RESTORE PACKAGES
+COPY CorpoGameApp/CorpoGameApp.csproj ./CorpoGameApp/
+RUN dotnet restore CorpoGameApp/CorpoGameApp.csproj
+COPY CorpoGameApp.Test/CorpoGameApp.Test.csproj ./CorpoGameApp.Test/
+RUN dotnet restore CorpoGameApp.Test/CorpoGameApp.Test.csproj
 
-WORKDIR /app
+# COPY SOURCE
+COPY . .
 
-RUN ["dotnet", "restore"]
+# RUN ALL UNITTESTS
+RUN dotnet test CorpoGameApp.Test/CorpoGameApp.Test.csproj
 
-RUN ["dotnet", "build"]
+# PUBLISH
+RUN dotnet publish CorpoGameApp/CorpoGameApp.csproj -o /publish
 
-RUN ["dotnet", "ef", "database", "update"]
-
-EXPOSE 5000/tcp
-
-CMD ["dotnet", "run", "--server.urls", "http://*:5000"]
+# SETUP RUNTIME
+FROM microsoft/aspnetcore:2
+COPY --from=build-env /publish /publish
+WORKDIR /publish
+ENTRYPOINT [ "dotnet", "CorpoGameApp.dll" ]

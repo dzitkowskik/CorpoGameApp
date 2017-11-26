@@ -4,13 +4,10 @@ using CorpoGameApp.Logic;
 using CorpoGameApp.Models;
 using CorpoGameApp.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using CorpoGameApp.Properties;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
@@ -52,7 +49,7 @@ namespace CorpoGameApp.Test
             var playerServicesMock = new Mock<IPlayerServices>();
             var statisticsServicesMock = new Mock<IStatisticsServices>();
             var optionsMock = new Mock<IOptions<GameSettings>>();
-            var loggerFactory = new LoggerFactory();
+            var loggerMock = new Mock<ILogger<GameController>>();
 
             var gameController = new GameController(
                 gameLogicMock.Object,
@@ -60,7 +57,7 @@ namespace CorpoGameApp.Test
                 statisticsServicesMock.Object,
                 UserManager,
                 optionsMock.Object,
-                loggerFactory);
+                loggerMock.Object);
 
             var result = gameController.Finish(new FinishGameViewModel(){GameId = 1234});
 

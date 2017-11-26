@@ -24,13 +24,13 @@ namespace CorpoGameApp.Controllers
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILoggerFactory loggerFactory,
+            ILogger<AccountController> logger,
             IPlayerServices playerServices,
             IEmailServices emailServices)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _logger = loggerFactory.CreateLogger<AccountController>();
+            _logger = logger;
             _playerServices = playerServices;
             _emailServices = emailServices;
         }
@@ -53,6 +53,7 @@ namespace CorpoGameApp.Controllers
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+            _logger.LogDebug("Login attempt of {email} with return url {returnUrl}", model.Email, returnUrl);
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
@@ -60,19 +61,22 @@ namespace CorpoGameApp.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    _logger.LogDebug("Login successful - {email}", model.Email);
                     return RedirectToLocal(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
+                    _logger.LogWarning("Login failed - {reason} - {email}", "requiredTwoFactor", model.Email);
                     return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 }
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning(2, "User account locked out.");
+                    _logger.LogWarning("Login failed - {reason} - {email}", "lockedOut", model.Email);
                     return View("Lockout");
                 }
                 else
                 {
+                    _logger.LogWarning("Login failed - {reason} - {email}", "invalid", model.Email);
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return View(model);
                 }
@@ -100,13 +104,14 @@ namespace CorpoGameApp.Controllers
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+            _logger.LogDebug("Register attempt of {email} with return url {returnUrl}", model.Email, returnUrl);
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation(1, $"Adding player {user.Email}.");
+                    _logger.LogInformation("Adding player - {email}", user.Email);
 
                     if(!_playerServices.PlayerExists(user.Id))
                     {
@@ -117,7 +122,11 @@ namespace CorpoGameApp.Controllers
                             Score = 0,
                         };
                         _playerServices.CreatePlayer(newPlayer);
+
+                        _logger.LogInformation("Player created - {id}", newPlayer.Id);
                     }
+                    else
+                        _logger.LogInformation("Player already exists - {email}", user.Email);
 
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -126,7 +135,7 @@ namespace CorpoGameApp.Controllers
                         "Confirm your account",
                         $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>",
                         new [] {model.Email});
-                    _logger.LogInformation(3, "User created a new account with password.");
+                    _logger.LogInformation("User created a new account with password - {email}", user.Email);
                     return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);
@@ -142,8 +151,9 @@ namespace CorpoGameApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()
         {
+            var user = await GetCurrentUserAsync();
             await _signInManager.SignOutAsync();
-            _logger.LogInformation(4, "User logged out.");
+            _logger.LogInformation("User logged out - {email}", user.Email);
             return RedirectToAction(nameof(GameController.Index), "Game");
         }
 
