@@ -5,11 +5,20 @@
     "command": "dotnet",
     "isShellCommand": true,
     "args": [],
-    "tasks": [{
-        "taskName": "build",
-        "args": [],
-        "isBuildCommand": true,
-        "showOutput": "silent",
-        "problemMatcher": "$msCompile"
-    }]
+    "tasks": [
+        {
+            "taskName": "build",
+            "args": ["./CorpoGameApp.Test/CorpoGameApp.Test.csproj"],
+            "isBuildCommand": true,
+            "showOutput": "always",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "taskName": "restore",
+            "args": ["./CorpoGameApp.Test/CorpoGameApp.Test.csproj"],
+            "isBuildCommand": true,
+            "showOutput": "always",
+            "problemMatcher": "$msCompile"
+        }
+    ]
 }

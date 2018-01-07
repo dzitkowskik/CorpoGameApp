@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    ports: 
+      - "5000:5000"
+    depends_on: 
+      - db
+    environment: 
+      - ConnectionStrings:DefaultConnection = "Server=db;Database=master;User=sa;Password=test;"
+  db:
+    image: "microsoft/mssql-server-windows-express"
+    environment:
+      - SA_PASSWORD = "test"
+      - ACCEPT_EULA = "Y"

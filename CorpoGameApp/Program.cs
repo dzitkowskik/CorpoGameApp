@@ -1,14 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore;
 using Serilog;
 using Serilog.Events;
-using Serilog.Formatting.Compact;
 
 namespace CorpoGameApp
 {
@@ -22,8 +16,7 @@ namespace CorpoGameApp
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .WriteTo.File(
-                    formatter: new CompactJsonFormatter(),
-                    path: "log_.txt", 
+                    path: "logs/LOG_.log",
                     rollingInterval: RollingInterval.Day, 
                     rollOnFileSizeLimit: true,
                     fileSizeLimitBytes: 5242880, // 5 MB

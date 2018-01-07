@@ -1,4 +1,8 @@
 {
+  "projects": [
+    "CorpoGameApp",
+    "CorpoGameApp.Test"
+  ],
   "sdk": {
     "version": "2.0.0"
   }

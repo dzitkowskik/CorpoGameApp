@@ -8,7 +8,6 @@ using CorpoGameApp.Services;
 using CorpoGameApp.ViewModels.Game;
 using Hangfire;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.SignalR.Features;
 using Microsoft.Extensions.Options;
 
 namespace CorpoGameApp.Logic
